@@ -11,7 +11,7 @@ Original App Design Project - README Template
 
 ## Overview
 ### Description
-[Description of your app]
+Investing is crypto is hard. Socail-investing aims to make crypto investing easier by allowing users to invest together through groups. Investing groups will invest together by pooling members' cash. Users will have the ability to vote on trade and chat with each other in-app.
 
 ### App Evaluation
 - **Category:** Finance, social.
