@@ -1,1 +1,119 @@
-# metau-social-investing
+Original App Design Project - README Template
+===
+
+# SOCIAL-INVESTING
+
+## Table of Contents
+1. [Overview](#Overview)
+1. [Product Spec](#Product-Spec)
+1. [Wireframes](#Wireframes)
+2. [Schema](#Schema)
+
+## Overview
+### Description
+[Description of your app]
+
+### App Evaluation
+- **Category:** Finance, social.
+- **Mobile:** Mobile-first android App. No website planned.
+- **Story:** Investing in crypto is hard. Invest smarter by investing with your friends.
+- **Market:** New crypto investors, college students and young adults.
+- **Habit:** Users will see notifications to see where their portolio is at or when there is a major change in one of their investments. Users in theory would open the app multiple times a day to check their portolio because of these notifications.
+- **Scope:**
+
+0.1: user can join a single investing group, users can deposit paper money to the group, any user can trade on behalf of the group.
+
+0.2: multiple investing groups to join, investing vs non-investing member distinction.
+
+0.3: chat for each group.
+
+0.4: users can deposit real money, add APIs to trade real money.
+
+0.5: ability to DM other users.
+
+0.6: explore page to see other groups, news section.
+
+## Product Spec
+
+### 1. User Stories (Required and Optional)
+
+**Required Must-have Stories**
+
+* user can login
+* user can create a new account
+* user can join multiple investing groups
+* user can deposit paper money into a group
+* user can make a trade on behalf of the group
+* user can be either an investing or non-investing member (ability to make trades or not)
+* user can chat others in the group
+
+**Optional Nice-to-have Stories**
+
+* user can deposit real money
+* user can trade real money
+* user can DM other users
+* user can view explore page to find new groups
+* user can view news section
+
+### 2. Screen Archetypes
+
+* login page
+    *  user can login
+*  registration page
+    *   user can create a new account
+*  groups page
+    *  user can join multiple investing groups
+    *  user can view multiple investing groups
+*  group overview page
+    *  overview of the group and its returns
+*  deposit page
+    *  user can deposit paper money into a group
+*  trade page
+    *  user can make a trade on behalf of the group
+*  group setting page
+    *  user can be either an investing or non-investing member (ability to make trades or not)
+    *  ability to tongle members and investing or non-investing
+*  chat page
+    *  user can chat others in the group
+
+### 3. Navigation
+
+**Tab Navigation** (Tab to Screen)
+
+* group overview page
+* deposit page
+* trade page
+* group setting page
+* chat page
+
+**Flow Navigation** (Screen to Screen)
+
+* login page
+    * groups page
+* registration page
+    * groups page
+* groups page
+    * group overview page
+    * deposit page
+    * trade page
+    * group setting page
+    * chat page
+* group overview, deposit, trade, group setting, chat
+    * <>group overview, deposit, trade, group setting, chat<>
+
+## Wireframes
+[Add picture of your hand sketched wireframes in this section]
+<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+
+### [BONUS] Digital Wireframes & Mockups
+
+### [BONUS] Interactive Prototype
+
+## Schema 
+[This section will be completed in Unit 9]
+### Models
+[Add table of models]
+### Networking
+- [Add list of network requests by screen ]
+- [Create basic snippets for each Parse network request]
+- [OPTIONAL: List endpoints if using existing API such as Yelp]
