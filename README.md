@@ -102,14 +102,8 @@ Investing is crypto is hard. Socail-investing aims to make crypto investing easi
     * <>group overview, deposit, trade, group setting, chat<>
 
 ## Wireframes
-[Add picture of your hand sketched wireframes in this section]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
 
-
-
-### [BONUS] Digital Wireframes & Mockups
-
-### [BONUS] Interactive Prototype
+https://github.com/mateega/metau-social-investing/blob/main/wireframe.pdf
 
 ## Schema 
 [This section will be completed in Unit 9]
