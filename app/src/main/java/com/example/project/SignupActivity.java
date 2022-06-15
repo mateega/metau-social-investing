@@ -41,6 +41,19 @@ public class SignupActivity extends AppCompatActivity {
                 goToLogin();
             }
         });
+
+        btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToGroups();
+                finish();
+            }
+        });
+    }
+
+    private void goToGroups() {
+        Intent i = new Intent(this, GroupsActivity.class);
+        startActivity(i);
     }
 
     private void goToLogin() {
