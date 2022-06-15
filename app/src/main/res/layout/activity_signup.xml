@@ -52,33 +52,6 @@
         tools:layout_editor_absoluteY="133dp" />
 
     <TextView
-        android:id="@+id/tvAlreadyHave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnLayout"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="74dp"
-        android:layout_marginTop="20dp"
-        android:text="Already have an account?"
-        android:fontFamily="@font/helveticaneue_medium"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="664dp" />
-
-    <TextView
-        android:id="@+id/tvLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnLayout"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="20dp"
-        android:layout_toEndOf="@+id/tvAlreadyHave"
-        android:fontFamily="@font/helveticaneue_medium"
-        android:textColor="@color/blue_1"
-        android:text="Login"
-        tools:layout_editor_absoluteX="253dp"
-        tools:layout_editor_absoluteY="664dp" />
-
-    <TextView
         android:id="@+id/tvPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -134,9 +107,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="7dp"
-        android:fontFamily="@font/helveticaneue_light"
         android:background="@drawable/custom_input"
         android:ems="10"
+        android:fontFamily="@font/helveticaneue_light"
         android:hint="Enter your email address"
         android:inputType="textEmailAddress"
         android:padding="12dp"
@@ -151,11 +124,11 @@
         android:layout_below="@+id/tvPhone"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:fontFamily="@font/helveticaneue_light"
         android:layout_marginStart="20dp"
         android:layout_marginTop="7dp"
         android:background="@drawable/custom_input"
         android:ems="10"
+        android:fontFamily="@font/helveticaneue_light"
         android:hint="Enter your mobile number"
         android:inputType="phone"
         android:padding="12dp"
@@ -186,9 +159,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="10dp"
-            android:fontFamily="@font/helveticaneue_light"
             android:background="@drawable/custom_input"
             android:ems="10"
+            android:fontFamily="@font/helveticaneue_light"
             android:hint="Enter your password"
             android:inputType="textPassword"
             android:padding="12dp"
@@ -221,7 +194,7 @@
         tools:layout_editor_absoluteY="423dp" />
 
     <LinearLayout
-        android:id="@+id/btnLayout"
+        android:id="@+id/layAuth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvOrSignUpWith"
@@ -241,7 +214,7 @@
             android:layout_below="@+id/tvOrSignUpWith"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/britanica_extrabold"
             android:stateListAnimator="@null"
             android:text="Facebook"
@@ -258,7 +231,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvOrSignUpWith"
             android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/britanica_extrabold"
             android:stateListAnimator="@null"
             android:text="Google"
@@ -270,6 +243,51 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="575dp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layAlreadyHaveAccount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvAlreadyHave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:fontFamily="@font/helveticaneue_medium"
+            android:text="Already have an account?"
+            tools:layout_editor_absoluteX="85dp"
+            tools:layout_editor_absoluteY="664dp" />
+
+        <Button
+            android:id="@+id/btnLoginText"
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/tvAlreadyHave"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/helveticaneue_medium"
+            android:padding="0dp"
+            android:stateListAnimator="@null"
+            android:text="Login"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textColor="@color/blue_1"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.85"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="575dp" />
     </LinearLayout>
 
 
