@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18246594857478482" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.2949874877929688" />
+        <entry key="app/src/main/res/layout/fragment_deposit.xml" value="0.30701754385964913" />
         <entry key="app/src/main/res/layout/fragment_overview.xml" value="0.21770833333333334" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.1" />
       </map>

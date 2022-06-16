@@ -17,7 +17,7 @@
         android:fontFamily="@font/britanica_black"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:text="Portfolio Balance" />
+        android:text="Hello, Spencer" />
 
     <TextView
         android:id="@+id/tvWelcomeBack"

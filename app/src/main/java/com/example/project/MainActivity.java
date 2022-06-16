@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.project.fragments.DepositFragment;
 import com.example.project.fragments.OverviewFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.getSupportActionBar().hide();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new OverviewFragment();
                         break;
                     case R.id.actionDeposit:
-                        fragment = new OverviewFragment();
+                        fragment = new DepositFragment();
                         break;
                     case R.id.actionChat:
                         fragment = new OverviewFragment();
