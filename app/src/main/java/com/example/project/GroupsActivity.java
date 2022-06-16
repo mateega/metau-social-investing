@@ -44,6 +44,7 @@ public class GroupsActivity extends AppCompatActivity {
     }
 
     private void goToGroup() {
-        // go to group
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
     }
 }
