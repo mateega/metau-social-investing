@@ -8,8 +8,11 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.project.fragments.ChatFragment;
 import com.example.project.fragments.DepositFragment;
 import com.example.project.fragments.OverviewFragment;
+import com.example.project.fragments.SettingsFragment;
+import com.example.project.fragments.TradeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new DepositFragment();
                         break;
                     case R.id.actionChat:
-                        fragment = new OverviewFragment();
+                        fragment = new ChatFragment();
                         break;
                     case R.id.actionTrade:
-                        fragment = new OverviewFragment();
+                        fragment = new TradeFragment();
                         break;
                     case R.id.actionSettings:
-                        fragment = new OverviewFragment();
+                        fragment = new SettingsFragment();
                         break;
                     default:
                         fragment = new OverviewFragment();
