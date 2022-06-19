@@ -5,11 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".fragments.TradeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/tvTrade"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Trade Fragment" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="70dp"
+        android:fontFamily="@font/britanica_black"
+        android:letterSpacing="0.02"
+        android:text="Trade"
+        android:textColor="@color/black"
+        android:textSize="35sp" />
 
 </FrameLayout>
