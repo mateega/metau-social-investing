@@ -46,6 +46,7 @@ public class OverviewFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "OVERVIEW FRAGMENT";
+
     private String userName = "";
     private String groupName = "";
     private String memberCount;
@@ -116,6 +117,7 @@ public class OverviewFragment extends Fragment {
 
         tvHello.setText("Hello");
         tvWelcomeBack.setText("Welcome Back!");
+
         db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -129,21 +131,8 @@ public class OverviewFragment extends Fragment {
                             Map<String, Object> data = document.getData();
                             Log.d(TAG, "DocumentSnapshot data: " + data);
 
-                            userName = data.get("name").toString();
-                            tvHello.setText("Hello, " + userName);
-
-                            personalAssetsCount = String.valueOf((Long) data.get("assets"));
-                            if (personalAssetsCount.equals("0")) {
-                                personalAssetsCount = "$0.00";
-                                tvPersonalAssetsCount.setText(personalAssetsCount);
-                            } else {
-                                double amount = Double.parseDouble(personalAssetsCount);
-                                DecimalFormat formatter = new DecimalFormat("#,###.00");
-                                personalAssetsCount = "$" + formatter.format(amount);
-                                tvPersonalAssetsCount.setText(personalAssetsCount);
-                            }
-
-
+                            setUsername(data);
+                            setPersonalAssets(data);
 
                         } else {
                             Log.d(TAG, "No such document");
@@ -167,30 +156,10 @@ public class OverviewFragment extends Fragment {
                             Map<String, Object> data = document.getData();
                             Log.d(TAG, "DocumentSnapshot data: " + data);
 
-                            groupName = data.get("name").toString();
-                            tvWelcomeBack.setText("Welcome Back to " + groupName + "!");
-
-                            ArrayList<Reference> list = (ArrayList) data.get("members");
-                            int groupSize = list.size();
-                            memberCount = String.valueOf(groupSize);
-                            tvMembersCount.setText(memberCount);
-
-                            Long groupAssets = (Long) data.get("assets");
-                            groupAssetCount = String.valueOf(groupAssets);
-                            double amount = Double.parseDouble(groupAssetCount);
-                            DecimalFormat formatter = new DecimalFormat("#,###.00");
-                            groupAssetCount = "$" + formatter.format(amount);
-                            tvGroupAssetsCount.setText(groupAssetCount);
-
-                            ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
-                            int numTrades = trades.size();
-                            Map<String, Object> trade = trades.get(numTrades - 1);
-                            Timestamp time = (Timestamp) trade.get("time");
-
-                            Date javaDate = time.toDate();
-                            DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-                            recentTradeDate = dateFormat.format(javaDate);
-                            tvRecentTradeDate.setText(recentTradeDate);
+                            setGroupName(data);
+                            setMemberCount(data);
+                            setGroupAssets(data);
+                            setRecentTrade(data);
 
                         } else {
                             Log.d(TAG, "No such document");
@@ -201,9 +170,57 @@ public class OverviewFragment extends Fragment {
                 }
             });
         }
-
-
-
-
     }
+
+    private void setGroupName(Map<String, Object> data) {
+        groupName = data.get("name").toString();
+        tvWelcomeBack.setText("Welcome Back to " + groupName + "!");
+    }
+
+    private void setRecentTrade(Map<String, Object> data) {
+        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
+        int numTrades = trades.size();
+        Map<String, Object> trade = trades.get(numTrades - 1);
+        Timestamp time = (Timestamp) trade.get("time");
+        Date javaDate = time.toDate();
+        DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+        recentTradeDate = dateFormat.format(javaDate);
+        tvRecentTradeDate.setText(recentTradeDate);
+    }
+
+    private void setGroupAssets(Map<String, Object> data) {
+        Long groupAssets = (Long) data.get("assets");
+        groupAssetCount = String.valueOf(groupAssets);
+        double amount = Double.parseDouble(groupAssetCount);
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        groupAssetCount = "$" + formatter.format(amount);
+        tvGroupAssetsCount.setText(groupAssetCount);
+    }
+
+    private void setMemberCount(Map<String, Object> data) {
+        ArrayList<Reference> list = (ArrayList) data.get("members");
+        int groupSize = list.size();
+        memberCount = String.valueOf(groupSize);
+        tvMembersCount.setText(memberCount);
+    }
+
+    private void setUsername(Map<String, Object> data) {
+        userName = data.get("name").toString();
+        tvHello.setText("Hello, " + userName);
+    }
+
+    private void setPersonalAssets(Map<String, Object> data) {
+        personalAssetsCount = String.valueOf((Long) data.get("assets"));
+        if (personalAssetsCount.equals("0")) {
+            personalAssetsCount = "$0.00";
+            tvPersonalAssetsCount.setText(personalAssetsCount);
+        } else {
+            double amount = Double.parseDouble(personalAssetsCount);
+            DecimalFormat formatter = new DecimalFormat("#,###.00");
+            personalAssetsCount = "$" + formatter.format(amount);
+            tvPersonalAssetsCount.setText(personalAssetsCount);
+        }
+    }
+
+
 }

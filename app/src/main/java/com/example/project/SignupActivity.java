@@ -35,7 +35,6 @@ public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SIGN UP ACTIVITY";
     EditText etName;
     EditText etEmail;
-    //EditText etPhone;
     EditText etPassword;
 
     Button btnSignup;
@@ -56,7 +55,6 @@ public class SignupActivity extends AppCompatActivity {
 
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
-        //etPhone = findViewById(R.id.etPhone);
         etPassword = findViewById(R.id.etPassword);
 
         btnSignup = findViewById(R.id.btnSignup);
@@ -71,7 +69,6 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -80,7 +77,6 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name = etName.getText().toString();
                 String email = etEmail.getText().toString();
-                //String phone = etPhone.getText().toString();
                 String password = etPassword.getText().toString();
 
                 if(TextUtils.isEmpty(email) || TextUtils.isEmpty(email) || TextUtils.isEmpty(email)) {
@@ -109,7 +105,6 @@ public class SignupActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
                             addUserToFirestore(name, email, password);
                             goToGroups();
                             finish();
@@ -118,7 +113,6 @@ public class SignupActivity extends AppCompatActivity {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(SignupActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
                     }
                 });

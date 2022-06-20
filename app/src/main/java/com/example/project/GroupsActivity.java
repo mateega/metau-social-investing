@@ -19,9 +19,9 @@ public class GroupsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_groups);
         this.getSupportActionBar().hide();
 
-        LinearLayout layGroup1 = findViewById(R.id.layGroup1);
-        LinearLayout layGroup2 = findViewById(R.id.layGroup2);
-        LinearLayout layGroup3 = findViewById(R.id.layGroup3);
+        layGroup1 = findViewById(R.id.layGroup1);
+        layGroup2 = findViewById(R.id.layGroup2);
+        layGroup3 = findViewById(R.id.layGroup3);
 
         layGroup1.setOnClickListener(new View.OnClickListener() {
             @Override
