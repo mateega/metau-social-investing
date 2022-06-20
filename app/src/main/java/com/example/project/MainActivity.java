@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     final FragmentManager fragmentManager = getSupportFragmentManager();
+    public String currentGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

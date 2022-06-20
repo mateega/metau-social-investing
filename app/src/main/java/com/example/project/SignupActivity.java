@@ -126,13 +126,14 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void addUserToFirestore(String name, String email, String password) {
-        Map<String, Object> city = new HashMap<>();
-        city.put("name", name);
-        city.put("email", email);
-        city.put("password", password);
+        Map<String, Object> user = new HashMap<>();
+        user.put("name", name);
+        user.put("email", email);
+        user.put("password", password);
+        user.put("assets", 0);
 
         db.collection("users").document(email)
-                .set(city)
+                .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

@@ -17,7 +17,7 @@
         android:fontFamily="@font/britanica_black"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:text="Hello, Spencer" />
+        android:text="Hello, Steven" />
 
     <TextView
         android:id="@+id/tvWelcomeBack"
@@ -26,7 +26,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginHorizontal="20dp"
         android:fontFamily="@font/helveticaneue_medium"
-        android:text="Welcome Back to Penn Crypto!" />
+        android:text="Welcome Back to USC Blockchain!" />
 
     <LinearLayout
         android:id="@+id/layRow1"
@@ -49,8 +49,8 @@
             <ImageView
                 android:id="@+id/ivMembers"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/btn_star"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_baseline_people_24"
                 />
             <TextView
                 android:id="@+id/tvMembersCount"
@@ -85,8 +85,8 @@
             <ImageView
                 android:id="@+id/ivGroupAssets"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/btn_star" />
+                android:layout_height="40dp"
+                android:src="@drawable/ic_baseline_attach_money_24_white" />
             <TextView
                 android:id="@+id/tvGroupAssetsCount"
                 android:layout_width="wrap_content"
@@ -131,8 +131,8 @@
             <ImageView
                 android:id="@+id/ivPersonalAssets"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/btn_star" />
+                android:layout_height="40dp"
+                android:src="@drawable/ic_baseline_attach_money_24_white" />
             <TextView
                 android:id="@+id/tvPersonalAssetsCount"
                 android:layout_width="wrap_content"
@@ -166,8 +166,8 @@
             <ImageView
                 android:id="@+id/ivRecentTrade"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/btn_star" />
+                android:layout_height="40dp"
+                android:src="@drawable/ic_baseline_add_chart_24" />
             <TextView
                 android:id="@+id/tvRecentTradeDate"
                 android:layout_width="wrap_content"

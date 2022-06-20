@@ -26,25 +26,37 @@ public class GroupsActivity extends AppCompatActivity {
         layGroup1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToGroup();
+                String group = "penn_crypto";
+                addUserToGroup(group);
+                goToGroup(group);
             }
         });
         layGroup2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToGroup();
+                String group = "columbia_blockchain";
+                goToGroup(group);
             }
         });
         layGroup3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToGroup();
+                String group = "tom's_alt_coin_fund";
+                goToGroup(group);
             }
         });
     }
 
-    private void goToGroup() {
+    private void addUserToGroup(String group) {
+
+    }
+
+    private void goToGroup(String groupName) {
         Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("groupName", groupName);
         startActivity(i);
     }
+
+
+
 }
