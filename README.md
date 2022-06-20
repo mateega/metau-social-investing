@@ -27,11 +27,11 @@ Investing is crypto is hard. Socail-investing aims to make crypto investing easi
 
 0.3: chat for each group.
 
-0.4: users can deposit real money, add APIs to trade real money.
+[Stretch] 0.4: users can deposit real money, add APIs to trade real money.
 
-0.5: ability to DM other users.
+[Stretch] 0.5: ability to DM other users, push notifications.
 
-0.6: explore page to see other groups, news section.
+[Stretch] 0.6: explore page to see other groups, news section.
 
 ## Product Spec
 
@@ -137,4 +137,4 @@ https://github.com/mateega/metau-social-investing/blob/main/wireframe.pdf
 14. Toggle between investing and non-investing member in settings page [settings page complete]
 15. Set up trade info page (TradingView API used) 
 16. Give trade recommendations on trade page (optional, if I feel that the trade search page is too blank) [trade pages complete]
-17. Set up chat for each group 
+17. Set up chat for each group
