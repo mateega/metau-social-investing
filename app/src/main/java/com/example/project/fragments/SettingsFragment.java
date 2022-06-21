@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,11 +15,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.project.InvestorAdapter;
 import com.example.project.LoginActivity;
+import com.example.project.MemberAdapter;
 import com.example.project.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +46,15 @@ public class SettingsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "SETTINGS FRAGMENT";
 
-    Button btnSignout;
+    private Button btnSignout;
+    private FirebaseFirestore db;
+    private RecyclerView rvInvestors;
+    private RecyclerView rvMembers;
+    protected MemberAdapter memberAdapter;
+    protected InvestorAdapter investorAdapter;
+    protected List<String> members;
+    protected List<String> investors;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -81,7 +103,6 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         btnSignout = view.findViewById(R.id.btnSignout);
-
         btnSignout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,5 +111,105 @@ public class SettingsFragment extends Fragment {
                 startActivity(i);
             }
         });
+
+        rvMembers = view.findViewById(R.id.rvMembers);
+        rvInvestors = view.findViewById(R.id.rvInvestors);
+        members = new ArrayList<>();
+        investors = new ArrayList<>();
+        memberAdapter = new MemberAdapter(getContext(), members);
+        investorAdapter = new InvestorAdapter(getContext(), investors);
+        rvMembers.setAdapter(memberAdapter);
+        rvInvestors.setAdapter(investorAdapter);
+        LinearLayoutManager memberLinearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager investorLinearLayoutManager = new LinearLayoutManager(getContext());
+        rvMembers.setLayoutManager(memberLinearLayoutManager);
+        rvInvestors.setLayoutManager(investorLinearLayoutManager);
+
+
+        db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        String groupId = getActivity().getIntent().getStringExtra("groupName");
+        if (groupId != null) {
+            DocumentReference docRef = db.collection("groups").document(groupId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + data);
+                            ArrayList<String> dbMembers = (ArrayList) data.get("members");
+                            ArrayList<String> dbTraders = (ArrayList) data.get("traders");
+
+                            Log.d(TAG, "Members: " + dbMembers);
+                            Log.d(TAG, "Traders: " + dbTraders);
+
+                            setMembersRecyclerView(dbMembers);
+                            setInvestorsRecyclerView(dbTraders);
+
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
     }
+
+    private void setMembersRecyclerView(List<String> dbMembers) {
+        for (String memberId:dbMembers){
+            DocumentReference docRef = db.collection("users").document(memberId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + data);
+                            String memberName = data.get("name").toString();
+                            Log.d(TAG, "Member name: " + memberName);
+                            members.add(memberName);
+                            memberAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
+    }
+
+    private void setInvestorsRecyclerView(List<String> dbInvestors) {
+        for (String investorId:dbInvestors){
+            DocumentReference docRef = db.collection("users").document(investorId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + data);
+                            String investorName = data.get("name").toString();
+                            Log.d(TAG, "Investor name: " + investorName);
+                            investors.add(investorName);
+                            investorAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
+    }
+
 }
