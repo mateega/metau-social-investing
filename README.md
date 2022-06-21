@@ -106,13 +106,82 @@ Investing is crypto is hard. Socail-investing aims to make crypto investing easi
 https://github.com/mateega/metau-social-investing/blob/main/wireframe.pdf
 
 ## Schema 
-[This section will be completed in Unit 9]
+
 ### Models
-[Add table of models]
+User
+
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId     | String     | email of user -- unique id for the user     |
+| name     | String     | user's display name (first and/or last)     |
+| password     | String     | password of users account     |
+| email     | String     | email of user     |
+| profilePicture     | String     | url to the profile picture of user     |
+| assets     | Map<String, Number>     | amount of assets user has in total and different funds (eg: <total:10000, fund_1:2000>)
+
+
+Group
+
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId     | String     | unqiue id for the group, name of group in lowercase with spaces as underscores     |
+| name     | String     | name of group/fund     |
+| assets     | Number     | Total assets in fund pooled from users    |
+| members     | ArrayList<String>     | list of non-investing members in group     |
+| investors     | ArrayList<String?     | list of investing members in group     |
+| trades     | ArrayList<Map<String, Object>>     | map of data for each trade -- direction (String, "buy" or "sell"), lot (Number), price (Number), ticker (String), time (Timestamp), trader (String)   |
+
+
+Chat
+
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId     | String     | unique id for a group's chat, same value as Group objectId     |
+| messages     | ArrayList<Message>     | list of the group's messages     |
+
+
+Message
+
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId     | String     | unique id for the message, simply incremented from the previous message (eg: "17")     |
+| user     | String     | id of user who sent message     |
+| body     | String     | body text of the message     |
+| time | TimeStamp | time that the message was sent |
+
+
 ### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
-- [OPTIONAL: List endpoints if using existing API such as Yelp]
+For my project I will be using Firebase instead of Parse. After reading more about Firebase and talking with the instructor, I thought that it would be more of a challenge to implement a new database. I also think that Firebase will be helpful to know for future projects. For the login and registration pages below, Firebase authentication is used. I intent to implement email/password login, Google login, and Facebook login.
+
+Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since data is stored as collections of documents. This leads to complex, hierarchical data being easier to organize at scale compared to Realtime Databases which used one large JSON tree to store data. Both Realtime Database and Cloud Firestore are NoSQL Databases.
+
+
+* login page
+    *  (Read/GET) check for user account
+*  registration page
+    *   (Create/POST) add user account
+*  groups page
+    *  (Read/GET) query all groups to display group name and asset amount
+*  group overview page
+    *  (Read/GET) query specific group to get member count, assets count and most recent trade
+    *  (Read/GET) query user to get personal asset count
+*  deposit page
+    *  (Read/GET) query user to get asset count
+    *  (Update/PUT) update user's asset count
+*  chat page
+    *  (Read/GET) query specific chat to get messages
+    *  (Create/POST) create a new message
+*  trade: search page
+    *  no network request needed, only dealing with external (non-database) API(s)
+*  trade: info page
+    * no network request needed, only dealing with external (non-database) API(s)
+*  trade: payment page
+    *  (Create/POST) create a new trade for a group
+*  group setting page
+    *  (Read/GET) query group to get members and investors
+    *  (Delete/DELETE) remove user from group if they would like to leave
+
+
 
 ## Plan of action
 1. Schema design
@@ -130,7 +199,7 @@ https://github.com/mateega/metau-social-investing/blob/main/wireframe.pdf
 7. Set up trade payment functionality (user buys coin and result is sent to database)
 8. ~~Configure group invest amount on overview page~~
 9. ~~Configure most recent trade on overview page~~
-10. Configure user depositing feature [deposit page complete]
+10. ~~Configure user depositing feature~~
 11. ~~Configure personal invest amount on overview page (based on how much the user has deposited in total)~~
 12. ~~Set up member count on overview page~~
 13. ~~List group members in settings page~~

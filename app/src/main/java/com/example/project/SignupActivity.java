@@ -79,7 +79,7 @@ public class SignupActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
 
-                if(TextUtils.isEmpty(email) || TextUtils.isEmpty(email) || TextUtils.isEmpty(email)) {
+                if(TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter name, email and password", Toast.LENGTH_SHORT).show();
                     return;
                 }
