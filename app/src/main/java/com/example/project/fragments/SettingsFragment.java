@@ -146,61 +146,11 @@ public class SettingsFragment extends Fragment {
                             Log.d(TAG, "Members: " + dbMembers);
                             Log.d(TAG, "Traders: " + dbTraders);
 
-                            setMembersRecyclerView(dbMembers);
-                            setInvestorsRecyclerView(dbTraders);
-
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-        }
-    }
-
-    private void setMembersRecyclerView(List<String> dbMembers) {
-        for (String memberId:dbMembers){
-            DocumentReference docRef = db.collection("users").document(memberId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
-                            String memberName = data.get("name").toString();
-                            Log.d(TAG, "Member name: " + memberName);
-                            members.add(memberName);
+                            members.addAll(dbMembers);
+                            investors.addAll(dbTraders);
                             memberAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-        }
-    }
-
-    private void setInvestorsRecyclerView(List<String> dbInvestors) {
-        for (String investorId:dbInvestors){
-            DocumentReference docRef = db.collection("users").document(investorId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
-                            String investorName = data.get("name").toString();
-                            Log.d(TAG, "Investor name: " + investorName);
-                            investors.add(investorName);
                             investorAdapter.notifyDataSetChanged();
+
                         } else {
                             Log.d(TAG, "No such document");
                         }
