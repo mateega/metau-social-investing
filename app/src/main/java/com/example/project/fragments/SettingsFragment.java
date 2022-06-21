@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.project.GroupsActivity;
 import com.example.project.InvestorAdapter;
 import com.example.project.LoginActivity;
 import com.example.project.MemberAdapter;
@@ -27,9 +28,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +49,7 @@ public class SettingsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "SETTINGS FRAGMENT";
 
+    private Button btnLeaveGroup;
     private Button btnSignout;
     private FirebaseFirestore db;
     private RecyclerView rvInvestors;
@@ -101,6 +105,14 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        btnLeaveGroup = view.findViewById(R.id.btnLeaveGroup);
+        btnLeaveGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeUserFromGroup();
+            }
+        });
 
         btnSignout = view.findViewById(R.id.btnSignout);
         btnSignout.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +171,6 @@ public class SettingsFragment extends Fragment {
 
 
 
-
                         } else {
                             Log.d(TAG, "No such document");
                         }
@@ -169,6 +180,47 @@ public class SettingsFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void removeUserFromGroup() {
+        String groupId = getActivity().getIntent().getStringExtra("groupName");
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        String userId = user.getEmail();
+                        ArrayList<String> members = (ArrayList) data.get("members");
+                        for (String member:members){
+                            if (userId.equals(member)){
+                                members.remove(userId);
+                                goToGroups();
+                            }
+                        }
+
+                        Map<String, Object> updatedData = new HashMap<>();
+                        updatedData.put("members", members);
+                        db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void goToGroups() {
+        Intent i = new Intent(getActivity().getApplicationContext(), GroupsActivity.class);
+        startActivity(i);
     }
 
 }
