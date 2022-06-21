@@ -146,10 +146,19 @@ public class SettingsFragment extends Fragment {
                             Log.d(TAG, "Members: " + dbMembers);
                             Log.d(TAG, "Traders: " + dbTraders);
 
-                            members.addAll(dbMembers);
-                            investors.addAll(dbTraders);
-                            memberAdapter.notifyDataSetChanged();
-                            investorAdapter.notifyDataSetChanged();
+                            if (dbMembers != null || dbMembers.get(0).equals("")) {
+                                members.addAll(dbMembers);
+                                memberAdapter.notifyDataSetChanged();
+                            }
+                            if (dbTraders != null || dbTraders.get(0).equals("")) {
+                                investors.addAll(dbTraders);
+                                investorAdapter.notifyDataSetChanged();
+                            }
+
+
+
+
+
 
                         } else {
                             Log.d(TAG, "No such document");

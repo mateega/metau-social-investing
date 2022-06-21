@@ -75,6 +75,9 @@ public class InvestorAdapter extends RecyclerView.Adapter<InvestorAdapter.ViewHo
         }
 
         public void bind(String member) {
+            if (member.equals("")){
+                return;
+            }
             DocumentReference docRef = db.collection("users").document(member);
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override

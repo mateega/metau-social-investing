@@ -12,11 +12,17 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GroupsActivity extends AppCompatActivity {
@@ -111,8 +117,44 @@ public class GroupsActivity extends AppCompatActivity {
         });
     }
 
-    private void addUserToGroup(String group) {
+    private void addUserToGroup(String groupId) {
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
 
+                        Boolean memberInGroup = false;
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        String userId = user.getEmail();
+                        ArrayList<String> members = (ArrayList) data.get("members");
+                        for (String member:members){
+                           if (userId.equals(member)){
+                               memberInGroup = true;
+                           }
+                        }
+                        // member is not in group
+                        if (!memberInGroup) {
+                            members.add(userId);
+                            Map<String, Object> updatedData = new HashMap<>();
+                            updatedData.put("members", members);
+
+
+                            db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+                        }
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     private void goToGroup(String groupName) {
