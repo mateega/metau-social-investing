@@ -14,12 +14,22 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="20dp"
         android:fontFamily="@font/britanica_black"
         android:letterSpacing="0.02"
         android:text="Deposit"
         android:textColor="@color/black"
         android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tvCurrentAccountAssets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/helveticaneue_medium"
+        android:textSize="18sp"
+        android:text="Current account assets:" />
 
     <TextView
         android:id="@+id/tvDepositAmount"
@@ -32,68 +42,65 @@
         android:text="$9,400.00" />
 
 
+<!--    <LinearLayout-->
+<!--        android:id="@+id/layDepositInterval"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="50dp"-->
+<!--        android:layout_marginHorizontal="20dp"-->
+<!--        android:weightSum="4"-->
+<!--        android:orientation="horizontal">-->
 
-    <LinearLayout
-        android:id="@+id/layDepositInterval"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginHorizontal="20dp"
-        android:weightSum="4"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnOnce"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:paddingHorizontal="0dp"
-            android:text="Once"
-            android:textAllCaps="false" />
-        <Button
-            android:id="@+id/btnWeekly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:paddingHorizontal="0dp"
-            android:text="Weekly"
-            android:textAllCaps="false"/>
-        <Button
-            android:id="@+id/btnMonthly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:paddingHorizontal="0dp"
-            android:text="Monthly"
-            android:textAllCaps="false"/>
-        <Button
-            android:id="@+id/btnYearly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:paddingHorizontal="0dp"
-            android:text="Yearly"
-            android:textAllCaps="false"/>
-    </LinearLayout>
-
-
+<!--        <Button-->
+<!--            android:id="@+id/btnOnce"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="12sp"-->
+<!--            android:paddingHorizontal="0dp"-->
+<!--            android:text="Once"-->
+<!--            android:textAllCaps="false" />-->
+<!--        <Button-->
+<!--            android:id="@+id/btnWeekly"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="12sp"-->
+<!--            android:paddingHorizontal="0dp"-->
+<!--            android:text="Weekly"-->
+<!--            android:textAllCaps="false"/>-->
+<!--        <Button-->
+<!--            android:id="@+id/btnMonthly"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="12sp"-->
+<!--            android:paddingHorizontal="0dp"-->
+<!--            android:text="Monthly"-->
+<!--            android:textAllCaps="false"/>-->
+<!--        <Button-->
+<!--            android:id="@+id/btnYearly"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="12sp"-->
+<!--            android:paddingHorizontal="0dp"-->
+<!--            android:text="Yearly"-->
+<!--            android:textAllCaps="false"/>-->
+<!--    </LinearLayout>-->
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
+        android:layout_marginTop="80sp"
         android:layout_marginHorizontal="40dp"
         >
 
@@ -229,7 +236,7 @@
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 android:layout_weight="1"
-                android:text="."
+                android:text=""
                 android:textAllCaps="false"/>
 
             <Button
@@ -243,16 +250,17 @@
                 android:text="0"
                 android:textAllCaps="false"/>
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnDelete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:textColor="@color/black"
-                android:textSize="15sp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="[back]"
-                android:textAllCaps="false"/>
+                android:background="@android:color/transparent"
+                android:rotation="180"
+                android:src="@drawable/ic_baseline_arrow_right_alt_24"
+                 />
         </TableRow>
     </TableLayout>
 

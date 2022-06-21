@@ -210,7 +210,7 @@ public class OverviewFragment extends Fragment {
     }
 
     private void setPersonalAssets(Map<String, Object> data) {
-        personalAssetsCount = String.valueOf((Long) data.get("assets"));
+        personalAssetsCount = String.valueOf((Double) data.get("assets"));
         if (personalAssetsCount.equals("0")) {
             personalAssetsCount = "$0.00";
             tvPersonalAssetsCount.setText(personalAssetsCount);
