@@ -1,9 +1,9 @@
 package com.example.project;
 
 public class User {
-    String name;
-    String email;
-    String password;
+    public static String name = "name";
+    public static String email = "email";
+    public static String password = "password";
 
     public User() {
     }

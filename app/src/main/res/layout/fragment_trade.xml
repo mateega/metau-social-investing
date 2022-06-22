@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".fragments.TradeFragment">
 
     <TextView
@@ -13,11 +14,36 @@
         android:layout_alignParentTop="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="0dp"
         android:fontFamily="@font/britanica_black"
         android:letterSpacing="0.02"
         android:text="Trade"
         android:textColor="@color/black"
         android:textSize="35sp" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/custom_input"
+        android:fontFamily="@font/helveticaneue_medium"
+        android:drawableLeft="@drawable/ic_baseline_search_24"
+        android:ems="10"
+        android:hint=" Search for an asset"
+        android:padding="12dp"
+        android:textSize="16dp"
+        android:inputType="textShortMessage" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp"
+
+        />
+
+
+</LinearLayout>
