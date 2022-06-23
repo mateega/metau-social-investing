@@ -23,6 +23,8 @@
         android:textColor="@color/black"
         android:textSize="35sp" />
 
+
+
     <LinearLayout
         android:id="@+id/layGroup1"
         android:layout_width="match_parent"
@@ -38,7 +40,6 @@
         android:gravity="center"
         android:background="@drawable/layout_rounded"
         android:orientation="vertical">
-
 
         <TextView
             android:id="@+id/tvGroupName1"
@@ -58,6 +59,17 @@
             android:textSize="18sp"
             android:textColor="@color/white"
             android:text="$824,149.81" />
+
+        <ImageView
+            android:id="@+id/ivCheck1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="-4dp"
+            app:srcCompat="@drawable/ic_baseline_check_24"
+            />
+
     </LinearLayout>
 
     <LinearLayout
@@ -95,6 +107,16 @@
             android:textSize="18sp"
             android:textColor="@color/white"
             android:text="$824,149.81" />
+
+        <ImageView
+            android:id="@+id/ivCheck2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="-4dp"
+            app:srcCompat="@drawable/ic_baseline_check_24"
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -132,6 +154,16 @@
             android:textSize="18sp"
             android:textColor="@color/white"
             android:text="$824,149.81" />
+
+        <ImageView
+            android:id="@+id/ivCheck3"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="-4dp"
+            app:srcCompat="@drawable/ic_baseline_check_24"
+            />
     </LinearLayout>
 
 

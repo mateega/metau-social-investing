@@ -8,7 +8,7 @@
         <entry key="app/src/main/res/drawable/outlined_button.xml" value="0.319" />
         <entry key="app/src/main/res/font/britanica.xml" value="0.2796296296296296" />
         <entry key="app/src/main/res/layout/activity_group_overview.xml" value="0.1040716552734375" />
-        <entry key="app/src/main/res/layout/activity_groups.xml" value="0.2630208333333333" />
+        <entry key="app/src/main/res/layout/activity_groups.xml" value="0.27089284261067714" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18246594857478482" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.2949874877929688" />
@@ -29,5 +29,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.2630208333333333" />
+      </ProjectState>
+    </option>
   </component>
 </project>

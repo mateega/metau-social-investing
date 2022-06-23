@@ -184,7 +184,7 @@ Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since 
 
 
 ## Plan of action
-1. Schema design
+1. ~~Schema design~~
 2. ~~Set up database (Parse)~~
    1. ~~Users~~
       1. ~~Deposited amount~~

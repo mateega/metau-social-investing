@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -38,8 +39,13 @@ public class GroupsActivity extends AppCompatActivity {
     TextView tvGroupAssets1;
     TextView tvGroupAssets2;
     TextView tvGroupAssets3;
+    ImageView ivCheck1;
+    ImageView ivCheck2;
+    ImageView ivCheck3;
 
     FirebaseFirestore db;
+    FirebaseUser user;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +63,16 @@ public class GroupsActivity extends AppCompatActivity {
         tvGroupAssets2 = findViewById(R.id.tvGroupAssets2);
         tvGroupAssets3 = findViewById(R.id.tvGroupAssets3);
 
-        updateGroupAssetCount(tvGroupAssets1, GROUP_1_ID);
-        updateGroupAssetCount(tvGroupAssets2, GROUP_2_ID);
-        updateGroupAssetCount(tvGroupAssets3, GROUP_3_ID);
+        ivCheck1 = findViewById(R.id.ivCheck1);
+        ivCheck2 = findViewById(R.id.ivCheck2);
+        ivCheck3 = findViewById(R.id.ivCheck3);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userId = user.getEmail();
+
+        updateGroupAssetCount(tvGroupAssets1, GROUP_1_ID, 1);
+        updateGroupAssetCount(tvGroupAssets2, GROUP_2_ID, 2);
+        updateGroupAssetCount(tvGroupAssets3, GROUP_3_ID, 3);
 
 
         layGroup1.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +101,7 @@ public class GroupsActivity extends AppCompatActivity {
         });
     }
 
-    private void updateGroupAssetCount(TextView tvGroupAssets, String groupId) {
+    private void updateGroupAssetCount(TextView tvGroupAssets, String groupId, int group) {
         DocumentReference docRef = db.collection("groups").document(groupId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -106,6 +119,30 @@ public class GroupsActivity extends AppCompatActivity {
                         groupAssetCount = "$" + formatter.format(amount);
                         tvGroupAssets.setText(groupAssetCount);
                         Log.i("ASSETS: ", groupAssetCount);
+
+                        // add check by group name if user is in group
+                        Boolean memberInGroup = false;
+                        ArrayList<String> members = (ArrayList) data.get("members");
+                        for (String member:members){
+                            if (userId.equals(member)){
+                                memberInGroup = true;
+                            }
+                        }
+                        if (!memberInGroup) {
+                            switch(group) {
+                                case 1:
+                                    ivCheck1.setVisibility(View.GONE);
+                                    return;
+                                case 2:
+                                    ivCheck2.setVisibility(View.GONE);
+                                    return;
+                                case 3:
+                                    ivCheck3.setVisibility(View.GONE);
+                                    return;
+                                default:
+                                    Log.i(TAG, "invalid group");
+                            }
+                        }
 
                     } else {
                         Log.d(TAG, "No such document");
@@ -129,8 +166,6 @@ public class GroupsActivity extends AppCompatActivity {
                         Log.d(TAG, "DocumentSnapshot data: " + data);
 
                         Boolean memberInGroup = false;
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        String userId = user.getEmail();
                         ArrayList<String> members = (ArrayList) data.get("members");
                         for (String member:members){
                            if (userId.equals(member)){
@@ -142,8 +177,6 @@ public class GroupsActivity extends AppCompatActivity {
                             members.add(userId);
                             Map<String, Object> updatedData = new HashMap<>();
                             updatedData.put("members", members);
-
-
                             db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
                         }
 

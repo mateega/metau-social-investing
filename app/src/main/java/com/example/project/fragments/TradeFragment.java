@@ -3,6 +3,7 @@ package com.example.project.fragments;
 import static com.google.common.collect.ComparisonChain.start;
 
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -87,6 +88,12 @@ public class TradeFragment extends Fragment {
     TextView tvPrice5;
     TextView tvPriceChange5;
 
+    TextView tvCoinNameSearch;
+    TextView tvCoinTickerSearch;
+    TextView tvPriceSearch;
+    TextView tvPriceChangeSearch;
+    ImageView ivCoinImageSearch;
+
     TextView tvTopCoins;
 
     ImageView ivCoinImage1;
@@ -101,14 +108,6 @@ public class TradeFragment extends Fragment {
     RelativeLayout layCoin4;
     RelativeLayout layCoin5;
     RelativeLayout layCoinSearch;
-
-
-    String name;
-    String ticker;
-    String price;
-    String priceChange;
-
-    Boolean firstCharTyped;
 
     public TradeFragment() {
         // Required empty public constructor
@@ -173,6 +172,12 @@ public class TradeFragment extends Fragment {
         tvPrice5 = view.findViewById(R.id.tvPrice5);
         tvPriceChange5 = view.findViewById(R.id.tvPriceChange5);
 
+        tvCoinNameSearch = view.findViewById(R.id.tvCoinNameSearch);
+        tvCoinTickerSearch = view.findViewById(R.id.tvCoinTickerSearch);
+        tvPriceSearch = view.findViewById(R.id.tvPriceSearch);
+        tvPriceChangeSearch = view.findViewById(R.id.tvPriceChangeSearch);
+        ivCoinImageSearch = view.findViewById(R.id.ivCoinImageSearch);
+
         tvTopCoins = view.findViewById(R.id.tvTopCoins);
 
         ivCoinImage1 = view.findViewById(R.id.ivCoinImage1);
@@ -191,10 +196,13 @@ public class TradeFragment extends Fragment {
         layCoinSearch.setVisibility(View.GONE);
 
         // list today's top cryptocurrencies
-        callCoinMarketCap();
-
-        firstCharTyped = false;
-
+        ArrayList<String> coins = new ArrayList<>();
+        coins.add("BTC");
+        coins.add("ETH");
+        coins.add("USDT");
+        coins.add("USDC");
+        coins.add("BNB");
+        callCoinMarketCap(coins, false);
 
         etSearch = view.findViewById(R.id.etSearch);
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -209,27 +217,19 @@ public class TradeFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
-                if (searchText.length() > 0) {
-                    firstCharTyped = true;
-                    toggleCoinViews(firstCharTyped);
-                } else {
-                    firstCharTyped = false;
-                    toggleCoinViews(firstCharTyped);
-                }
-
-
                 if (searchText.isEmpty() || searchText.equals("")) {
                     Log.i(TAG, "Search is empty");
+                    toggleCoinViews(false);
                 } else {
                     // commented out for now while API key is at request limit
-//                    try {
-//                        Log.i(TAG, "Text change");
-//                        getAssetAPI(searchText);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        Log.i(TAG, "Text change");
+                        searchForCoin(searchText);
+                        toggleCoinViews(true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
         });
     }
@@ -254,10 +254,7 @@ public class TradeFragment extends Fragment {
         }
     }
 
-    private void getAssetAPI(String searchText) throws IOException {
-        name = "updated name";
-        setViews();
-
+    private void searchForCoin(String searchText) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -276,23 +273,15 @@ public class TradeFragment extends Fragment {
             public void onResponse(Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-                    // json response headers
-//                    Headers responseHeaders = response.headers();
-//                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-//                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                    }
                     String jsonData = responseBody.string();
                     try {
                         JSONArray jsonArray = new JSONArray(jsonData);
                         System.out.println("JSONARRAY SIZE: " + jsonArray.length());
                         JSONObject object = jsonArray.getJSONObject(0);
-                        name = object.getString("name");
-                        ticker = object.getString("asset_id");
-                        price = object.getString("price_usd");
-                        priceChange = "N/A";
-                        setViews();
-
-                        Log.i(TAG, name);
+                        String ticker = object.getString("asset_id");
+                        ArrayList<String> coins = new ArrayList<>();
+                        coins.add(ticker);
+                        callCoinMarketCap(coins, true);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -301,31 +290,23 @@ public class TradeFragment extends Fragment {
         });
     }
 
-    private void setViews() {
-//        tvCoinName.setText(name);
-//        tvCoinTicker.setText(ticker);
-//        tvPrice.setText(price);
-//        tvPriceChange.setText(priceChange);
-    }
-
-    private void callCoinMarketCap() {
+    private void callCoinMarketCap(ArrayList<String> coins, boolean search) {
+        String coinsStr = "";
+        for (int i = 0; i < coins.size(); i++) {
+            String coin = coins.get(i);
+            coinsStr = coinsStr + coin;
+            if (i != coins.size()-1) {
+                coinsStr = coinsStr + ",";
+            }
+        }
 
         // CoinMarketCap call for top cryptocurrency text
         OkHttpClient client = new OkHttpClient();
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest").newBuilder();
-        // if using IDs instead of symbols
-        // urlBuilder.addQueryParameter("id","1,2");
-        urlBuilder.addQueryParameter("symbol","BTC,ETH,USDT,USDC,BNB");
+        urlBuilder.addQueryParameter("symbol",coinsStr);
         urlBuilder.addQueryParameter("convert","USD");
         String url = urlBuilder.build().toString();
-
-        ArrayList<String> coins = new ArrayList<>();
-        coins.add("BTC");
-        coins.add("ETH");
-        coins.add("USDT");
-        coins.add("USDC");
-        coins.add("BNB");
 
         Request request = new Request.Builder()
                 .url(url)
@@ -351,8 +332,6 @@ public class TradeFragment extends Fragment {
                         JSONObject data = jsonObject.getJSONObject("data");
                         for (int i = 1; i < data.length() + 1; i++) {
                             JSONObject cryptocurrency = data.getJSONObject(coins.get(i-1));
-                            // if using IDs instead of symbols
-                            //JSONObject cryptocurrency = data.getJSONObject(String.valueOf(i));
                             String name = cryptocurrency.getString("name");
                             String ticker = cryptocurrency.getString("symbol");
                             JSONObject quote = cryptocurrency.getJSONObject("quote");
@@ -378,7 +357,13 @@ public class TradeFragment extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    setCoinMarketCapTextViews(finalI, name, ticker, finalPriceStr, finalChangeStr);
+                                    if (search) {
+                                        setCoinMarketCapTextViews(0, name, ticker, finalPriceStr, finalChangeStr);
+                                        System.out.println("SEARCH: " + name + ", " + ticker + ", " + finalPriceStr + ", " + finalChangeStr);
+                                    } else {
+                                        setCoinMarketCapTextViews(finalI, name, ticker, finalPriceStr, finalChangeStr);
+                                        System.out.println("NOT SEARCHING");
+                                    }
                                 }
                             });
                         }
@@ -391,9 +376,7 @@ public class TradeFragment extends Fragment {
 
         // CoinMarketCap call for top cryptocurrency images
         urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/info").newBuilder();
-        // if using IDs instead of symbols
-        // urlBuilder.addQueryParameter("id","1,2");
-        urlBuilder.addQueryParameter("symbol","BTC,ETH,USDT,USDC,BNB");
+        urlBuilder.addQueryParameter("symbol",coinsStr);
         url = urlBuilder.build().toString();
 
         Request imageRequest = new Request.Builder()
@@ -418,19 +401,29 @@ public class TradeFragment extends Fragment {
                     try {
                         JSONObject jsonObject = new JSONObject(jsonData);
                         JSONObject data = jsonObject.getJSONObject("data");
-                        for (int i = 1; i < data.length() + 1; i++) {
-                            JSONObject cryptocurrency = data.getJSONObject(coins.get(i-1));
-                            // if using IDs instead of symbols
-                            //JSONObject cryptocurrency = data.getJSONObject(String.valueOf(i));
-                            String logo = cryptocurrency.getString("logo");
 
-                            int finalI = i;
+                        if (search) {
+                            JSONObject cryptocurrency = data.getJSONObject(coins.get(0));
+                            String logo = cryptocurrency.getString("logo");
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    setCoinMarketCapImageViews(finalI, logo);
+                                    setCoinMarketCapImageViews(0, logo);
                                 }
                             });
+                        } else {
+                            for (int i = 1; i < data.length() + 1; i++) {
+                                JSONObject cryptocurrency = data.getJSONObject(coins.get(i-1));
+                                String logo = cryptocurrency.getString("logo");
+
+                                int finalI = i;
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setCoinMarketCapImageViews(finalI, logo);
+                                    }
+                                });
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -447,6 +440,13 @@ public class TradeFragment extends Fragment {
         }
 
         switch(i) {
+            case 0:
+                tvCoinNameSearch.setText(name);
+                tvCoinTickerSearch.setText(ticker);
+                tvPriceSearch.setText(price);
+                tvPriceChangeSearch.setText(priceChange);
+                tvPriceChangeSearch.setTextColor(color);
+                break;
             case 1:
                 tvCoinName1.setText(name);
                 tvCoinTicker1.setText(ticker);
@@ -489,6 +489,11 @@ public class TradeFragment extends Fragment {
 
     private void setCoinMarketCapImageViews(int i, String profilePictureUrl) {
         switch(i) {
+            case 0:
+                if (profilePictureUrl != null) {
+                    Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImageSearch);
+                }
+                break;
             case 1:
                 if (profilePictureUrl != null) {
                     Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImage1);
