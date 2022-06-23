@@ -7,6 +7,19 @@ def apikeyProperties = new Properties()
 apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
 android {
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
+    }
+
     compileSdk 32
 
     defaultConfig {
@@ -19,8 +32,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // should correspond to key/value pairs inside the file
+        buildConfigField("String", "COINMARKETCAP_KEY", apikeyProperties['COINMARKETCAP_KEY'])
         buildConfigField("String", "COINAPI_KEY", apikeyProperties['COINAPI_KEY'])
         buildConfigField("String", "COINAPI_AUTH_HEADER", apikeyProperties['COINAPI_AUTH_HEADER'])
+
     }
 
     buildTypes {

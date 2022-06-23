@@ -38,92 +38,571 @@
         android:textSize="16dp"
         android:inputType="textShortMessage" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="40dp"
+        android:orientation="vertical">
 
-        />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvCoinImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
+        <TextView
+            android:id="@+id/tvTopCoins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:elevation="12dp"
+            android:fontFamily="@font/britanica_bold"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="Today's Top Cryptocurrencies" />
 
-            android:innerRadius="0dp"
-            android:shape="ring"
-            app:cardCornerRadius="40dp">
+        <RelativeLayout
+            android:id="@+id/layCoin1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
 
-            <ImageView
-                android:id="@+id/ivCoinImage"
+            <TextView
+                android:id="@+id/tvRank1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="#1"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCoinImage1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/tvRank1"
+
+                android:elevation="12dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                app:cardCornerRadius="40dp">
+
+                <ImageView
+                    android:id="@+id/ivCoinImage1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvCoinName1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@+id/cvCoinImage1"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="Tether"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tvCoinTicker1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvCoinName1"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@+id/cvCoinImage1"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="USDT" />
+
+            <TextView
+                android:id="@+id/tvPrice1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:text="$0.99" />
+
+            <TextView
+                android:id="@+id/tvPriceChange1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPrice1"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="-0.01%" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layCoin2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/tvRank2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="#2"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCoinImage2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/tvRank2"
+
+                android:elevation="12dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                app:cardCornerRadius="40dp">
+
+                <ImageView
+                    android:id="@+id/ivCoinImage2"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_gravity="center"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvCoinName2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@+id/cvCoinImage2"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="Tether"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tvCoinTicker2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvCoinName2"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@+id/cvCoinImage2"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="USDT" />
+
+
+            <TextView
+                android:id="@+id/tvPrice2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:text="$0.99" />
+
+            <TextView
+                android:id="@+id/tvPriceChange2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPrice2"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="-0.01%" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layCoin3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/tvRank3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="#3"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCoinImage3"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/tvRank3"
+
+                android:elevation="12dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                app:cardCornerRadius="40dp">
+
+                <ImageView
+                    android:id="@+id/ivCoinImage3"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_gravity="center"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvCoinName3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@+id/cvCoinImage3"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="Tether"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tvCoinTicker3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvCoinName3"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@+id/cvCoinImage3"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="USDT" />
+
+
+
+            <TextView
+                android:id="@+id/tvPrice3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:text="$0.99" />
+
+            <TextView
+                android:id="@+id/tvPriceChange3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPrice3"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="-0.01%" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layCoin4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/tvRank4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="#4"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCoinImage4"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/tvRank4"
+
+                android:elevation="12dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                app:cardCornerRadius="40dp">
+
+                <ImageView
+                    android:id="@+id/ivCoinImage4"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_gravity="center"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvCoinName4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@+id/cvCoinImage4"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="Tether"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tvCoinTicker4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvCoinName4"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@+id/cvCoinImage4"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="USDT" />
+
+
+
+            <TextView
+                android:id="@+id/tvPrice4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:text="$0.99" />
+
+            <TextView
+                android:id="@+id/tvPriceChange4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPrice4"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="-0.01%" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layCoin5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/tvRank5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="#5"
+                android:textColor="@color/black"
+                android:textSize="20dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCoinImage5"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/tvRank5"
+
+                android:elevation="12dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                app:cardCornerRadius="40dp">
+
+                <ImageView
+                    android:id="@+id/ivCoinImage5"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_gravity="center"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvCoinName5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@+id/cvCoinImage5"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="Tether"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tvCoinTicker5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvCoinName5"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@+id/cvCoinImage5"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="USDT" />
+
+
+
+            <TextView
+                android:id="@+id/tvPrice5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:text="$0.99" />
+
+            <TextView
+                android:id="@+id/tvPriceChange5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPrice5"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="-0.01%" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/layCoinSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvCoinImageSearch"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_gravity="center"
-                tools:srcCompat="@tools:sample/avatars" />
-        </androidx.cardview.widget.CardView>
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
 
-        <TextView
-            android:id="@+id/tvCoinName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="19dp"
-            android:layout_marginEnd="245dp"
-            android:layout_toEndOf="@+id/cvCoinImage"
-            android:fontFamily="@font/helveticaneuehv"
-            android:textColor="@color/black"
-            android:textSize="16dp"
-            android:text="Tether"
-            />
+                android:elevation="12dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                app:cardCornerRadius="40dp">
 
-        <TextView
-            android:id="@+id/tvCoinTicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvCoinName"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="6dp"
-            android:layout_toEndOf="@+id/cvCoinImage"
-            android:fontFamily="@font/helveticaneue_medium"
-            android:text="USDT" />
+                <ImageView
+                    android:id="@+id/ivCoinImageSearch"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_gravity="center"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/tvPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="19dp"
-            android:layout_marginEnd="0dp"
-            android:fontFamily="@font/helveticaneuehv"
-            android:textColor="@color/black"
-            android:textSize="16dp"
-            android:text="$0.99" />
+            <TextView
+                android:id="@+id/tvCoinNameSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="19dp"
+                android:layout_toEndOf="@+id/cvCoinImageSearch"
+                android:fontFamily="@font/helveticaneuehv"
+                android:text="Tether"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
 
-        <TextView
-            android:id="@+id/tvPriceChange"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvPrice"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="0dp"
-            android:fontFamily="@font/helveticaneue_medium"
-            android:text="-0.01%" />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tvCoinTickerSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvCoinNameSearch"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="6dp"
+                android:layout_toEndOf="@+id/cvCoinImageSearch"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="USDT" />
+
+
+
+            <TextView
+                android:id="@+id/tvPriceSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneuehv"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:text="$0.99" />
+
+            <TextView
+                android:id="@+id/tvPriceChangeSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPriceSearch"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/helveticaneue_medium"
+                android:text="-0.01%" />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
 
 
 </LinearLayout>

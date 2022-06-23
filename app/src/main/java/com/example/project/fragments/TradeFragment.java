@@ -1,5 +1,8 @@
 package com.example.project.fragments;
 
+import static com.google.common.collect.ComparisonChain.start;
+
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,12 +16,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.project.BuildConfig;
+import com.example.project.MainActivity;
 import com.example.project.R;
+import com.google.common.net.HttpHeaders;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -27,8 +36,14 @@ import com.squareup.okhttp.ResponseBody;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,15 +66,49 @@ public class TradeFragment extends Fragment {
     private String mParam2;
     private String searchText;
 
-    TextView tvCoinName;
-    TextView tvCoinTicker;
-    TextView tvPrice;
-    TextView tvPriceChange;
+    TextView tvCoinName1;
+    TextView tvCoinTicker1;
+    TextView tvPrice1;
+    TextView tvPriceChange1;
+    TextView tvCoinName2;
+    TextView tvCoinTicker2;
+    TextView tvPrice2;
+    TextView tvPriceChange2;
+    TextView tvCoinName3;
+    TextView tvCoinTicker3;
+    TextView tvPrice3;
+    TextView tvPriceChange3;
+    TextView tvCoinName4;
+    TextView tvCoinTicker4;
+    TextView tvPrice4;
+    TextView tvPriceChange4;
+    TextView tvCoinName5;
+    TextView tvCoinTicker5;
+    TextView tvPrice5;
+    TextView tvPriceChange5;
+
+    TextView tvTopCoins;
+
+    ImageView ivCoinImage1;
+    ImageView ivCoinImage2;
+    ImageView ivCoinImage3;
+    ImageView ivCoinImage4;
+    ImageView ivCoinImage5;
+
+    RelativeLayout layCoin1;
+    RelativeLayout layCoin2;
+    RelativeLayout layCoin3;
+    RelativeLayout layCoin4;
+    RelativeLayout layCoin5;
+    RelativeLayout layCoinSearch;
+
 
     String name;
     String ticker;
     String price;
     String priceChange;
+
+    Boolean firstCharTyped;
 
     public TradeFragment() {
         // Required empty public constructor
@@ -103,42 +152,106 @@ public class TradeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvCoinName = view.findViewById(R.id.tvCoinName);
-        tvCoinTicker = view.findViewById(R.id.tvCoinTicker);
-        tvPrice = view.findViewById(R.id.tvPrice);
-        tvPriceChange = view.findViewById(R.id.tvPriceChange);
+        tvCoinName1 = view.findViewById(R.id.tvCoinName1);
+        tvCoinTicker1 = view.findViewById(R.id.tvCoinTicker1);
+        tvPrice1 = view.findViewById(R.id.tvPrice1);
+        tvPriceChange1 = view.findViewById(R.id.tvPriceChange1);
+        tvCoinName2 = view.findViewById(R.id.tvCoinName2);
+        tvCoinTicker2 = view.findViewById(R.id.tvCoinTicker2);
+        tvPrice2 = view.findViewById(R.id.tvPrice2);
+        tvPriceChange2 = view.findViewById(R.id.tvPriceChange2);
+        tvCoinName3 = view.findViewById(R.id.tvCoinName3);
+        tvCoinTicker3 = view.findViewById(R.id.tvCoinTicker3);
+        tvPrice3 = view.findViewById(R.id.tvPrice3);
+        tvPriceChange3 = view.findViewById(R.id.tvPriceChange3);
+        tvCoinName4 = view.findViewById(R.id.tvCoinName4);
+        tvCoinTicker4 = view.findViewById(R.id.tvCoinTicker4);
+        tvPrice4 = view.findViewById(R.id.tvPrice4);
+        tvPriceChange4 = view.findViewById(R.id.tvPriceChange4);
+        tvCoinName5 = view.findViewById(R.id.tvCoinName5);
+        tvCoinTicker5 = view.findViewById(R.id.tvCoinTicker5);
+        tvPrice5 = view.findViewById(R.id.tvPrice5);
+        tvPriceChange5 = view.findViewById(R.id.tvPriceChange5);
+
+        tvTopCoins = view.findViewById(R.id.tvTopCoins);
+
+        ivCoinImage1 = view.findViewById(R.id.ivCoinImage1);
+        ivCoinImage2 = view.findViewById(R.id.ivCoinImage2);
+        ivCoinImage3 = view.findViewById(R.id.ivCoinImage3);
+        ivCoinImage4 = view.findViewById(R.id.ivCoinImage4);
+        ivCoinImage5 = view.findViewById(R.id.ivCoinImage5);
+
+        layCoin1 = view.findViewById(R.id.layCoin1);
+        layCoin2 = view.findViewById(R.id.layCoin2);
+        layCoin3 = view.findViewById(R.id.layCoin3);
+        layCoin4 = view.findViewById(R.id.layCoin4);
+        layCoin5 = view.findViewById(R.id.layCoin5);
+        layCoinSearch = view.findViewById(R.id.layCoinSearch);
+
+        layCoinSearch.setVisibility(View.GONE);
+
+        // list today's top cryptocurrencies
+        callCoinMarketCap();
+
+        firstCharTyped = false;
 
 
         etSearch = view.findViewById(R.id.etSearch);
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
-                // Log.i(TAG, "Search: " + searchText);
-                if (searchText.isEmpty() || searchText.equals("")) {
-                    Log.i(TAG, "Search is empty");
+                if (searchText.length() > 0) {
+                    firstCharTyped = true;
+                    toggleCoinViews(firstCharTyped);
                 } else {
-                    try {
-                        Log.i(TAG, "Text change");
-                        getAssetAPI(searchText);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    firstCharTyped = false;
+                    toggleCoinViews(firstCharTyped);
                 }
 
 
+                if (searchText.isEmpty() || searchText.equals("")) {
+                    Log.i(TAG, "Search is empty");
+                } else {
+                    // commented out for now while API key is at request limit
+//                    try {
+//                        Log.i(TAG, "Text change");
+//                        getAssetAPI(searchText);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                }
+
             }
         });
+    }
+
+    private void toggleCoinViews(boolean b) {
+        if (b == true) {
+            tvTopCoins.setVisibility(View.GONE);
+            layCoin1.setVisibility(View.GONE);
+            layCoin2.setVisibility(View.GONE);
+            layCoin3.setVisibility(View.GONE);
+            layCoin4.setVisibility(View.GONE);
+            layCoin5.setVisibility(View.GONE);
+            layCoinSearch.setVisibility(View.VISIBLE);
+        } else {
+            tvTopCoins.setVisibility(View.VISIBLE);
+            layCoin1.setVisibility(View.VISIBLE);
+            layCoin2.setVisibility(View.VISIBLE);
+            layCoin3.setVisibility(View.VISIBLE);
+            layCoin4.setVisibility(View.VISIBLE);
+            layCoin5.setVisibility(View.VISIBLE);
+            layCoinSearch.setVisibility(View.GONE);
+        }
     }
 
     private void getAssetAPI(String searchText) throws IOException {
@@ -189,10 +302,222 @@ public class TradeFragment extends Fragment {
     }
 
     private void setViews() {
-        tvCoinName.setText(name);
-        tvCoinTicker.setText(ticker);
-        tvPrice.setText(price);
-        tvPriceChange.setText(priceChange);
+//        tvCoinName.setText(name);
+//        tvCoinTicker.setText(ticker);
+//        tvPrice.setText(price);
+//        tvPriceChange.setText(priceChange);
     }
+
+    private void callCoinMarketCap() {
+
+        // CoinMarketCap call for top cryptocurrency text
+        OkHttpClient client = new OkHttpClient();
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest").newBuilder();
+        // if using IDs instead of symbols
+        // urlBuilder.addQueryParameter("id","1,2");
+        urlBuilder.addQueryParameter("symbol","BTC,ETH,USDT,USDC,BNB");
+        urlBuilder.addQueryParameter("convert","USD");
+        String url = urlBuilder.build().toString();
+
+        ArrayList<String> coins = new ArrayList<>();
+        coins.add("BTC");
+        coins.add("ETH");
+        coins.add("USDT");
+        coins.add("USDC");
+        coins.add("BNB");
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader(HttpHeaders.ACCEPT, "application/json")
+                .addHeader("X-CMC_PRO_API_KEY", BuildConfig.COINMARKETCAP_KEY)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                    String jsonData = responseBody.string();
+                    System.out.println(jsonData);
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonData);
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        for (int i = 1; i < data.length() + 1; i++) {
+                            JSONObject cryptocurrency = data.getJSONObject(coins.get(i-1));
+                            // if using IDs instead of symbols
+                            //JSONObject cryptocurrency = data.getJSONObject(String.valueOf(i));
+                            String name = cryptocurrency.getString("name");
+                            String ticker = cryptocurrency.getString("symbol");
+                            JSONObject quote = cryptocurrency.getJSONObject("quote");
+                            JSONObject usd = quote.getJSONObject("USD");
+
+                            String priceStr = usd.getString("price");
+                            Double priceDbl = Double.parseDouble(priceStr);
+                            DecimalFormat formatter1 = new DecimalFormat("#,###.00");
+                            if (priceStr.charAt(0) == '0') {
+                                priceStr = "$0" + formatter1.format(priceDbl);
+                            } else {
+                                priceStr = "$" + formatter1.format(priceDbl);
+                            }
+
+                            String changeStr = usd.getString("percent_change_24h");
+                            Double changeDbl = Double.parseDouble(changeStr);
+                            DecimalFormat formatter2 = new DecimalFormat("##.##");
+                            changeStr = formatter2.format(changeDbl) + "%";
+
+                            int finalI = i;
+                            String finalPriceStr = priceStr;
+                            String finalChangeStr = changeStr;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setCoinMarketCapTextViews(finalI, name, ticker, finalPriceStr, finalChangeStr);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        // CoinMarketCap call for top cryptocurrency images
+        urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/info").newBuilder();
+        // if using IDs instead of symbols
+        // urlBuilder.addQueryParameter("id","1,2");
+        urlBuilder.addQueryParameter("symbol","BTC,ETH,USDT,USDC,BNB");
+        url = urlBuilder.build().toString();
+
+        Request imageRequest = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader(HttpHeaders.ACCEPT, "application/json")
+                .addHeader("X-CMC_PRO_API_KEY", BuildConfig.COINMARKETCAP_KEY)
+                .build();
+
+        client.newCall(imageRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                    String jsonData = responseBody.string();
+                    System.out.println(jsonData);
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonData);
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        for (int i = 1; i < data.length() + 1; i++) {
+                            JSONObject cryptocurrency = data.getJSONObject(coins.get(i-1));
+                            // if using IDs instead of symbols
+                            //JSONObject cryptocurrency = data.getJSONObject(String.valueOf(i));
+                            String logo = cryptocurrency.getString("logo");
+
+                            int finalI = i;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setCoinMarketCapImageViews(finalI, logo);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void setCoinMarketCapTextViews(int i, String name, String ticker, String price, String priceChange) {
+        int color = Color.parseColor("#47cd54");
+        if (priceChange.charAt(0) == '-') {
+            color = Color.parseColor("#fe5857");
+        }
+
+        switch(i) {
+            case 1:
+                tvCoinName1.setText(name);
+                tvCoinTicker1.setText(ticker);
+                tvPrice1.setText(price);
+                tvPriceChange1.setText(priceChange);
+                tvPriceChange1.setTextColor(color);
+                break;
+            case 2:
+                tvCoinName2.setText(name);
+                tvCoinTicker2.setText(ticker);
+                tvPrice2.setText(price);
+                tvPriceChange2.setText(priceChange);
+                tvPriceChange2.setTextColor(color);
+                break;
+            case 3:
+                tvCoinName3.setText(name);
+                tvCoinTicker3.setText(ticker);
+                tvPrice3.setText(price);
+                tvPriceChange3.setText(priceChange);
+                tvPriceChange3.setTextColor(color);
+                break;
+            case 4:
+                tvCoinName4.setText(name);
+                tvCoinTicker4.setText(ticker);
+                tvPrice4.setText(price);
+                tvPriceChange4.setText(priceChange);
+                tvPriceChange4.setTextColor(color);
+                break;
+            case 5:
+                tvCoinName5.setText(name);
+                tvCoinTicker5.setText(ticker);
+                tvPrice5.setText(price);
+                tvPriceChange5.setText(priceChange);
+                tvPriceChange5.setTextColor(color);
+                break;
+            default:
+                System.out.println("invalid view");
+        }
+    }
+
+    private void setCoinMarketCapImageViews(int i, String profilePictureUrl) {
+        switch(i) {
+            case 1:
+                if (profilePictureUrl != null) {
+                    Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImage1);
+                }
+                break;
+            case 2:
+                if (profilePictureUrl != null) {
+                    Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImage2);
+                }
+                break;
+            case 3:
+                if (profilePictureUrl != null) {
+                    Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImage3);
+                }
+                break;
+            case 4:
+                if (profilePictureUrl != null) {
+                    Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImage4);
+                }
+                break;
+            case 5:
+                if (profilePictureUrl != null) {
+                    Glide.with(getActivity().getApplicationContext()).load(profilePictureUrl).into(ivCoinImage5);
+                }
+                break;
+            default:
+                System.out.println("invalid view");
+        }
+    }
+
 
 }
