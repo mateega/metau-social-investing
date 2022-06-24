@@ -33,7 +33,8 @@ android {
 
         // should correspond to key/value pairs inside the file
         buildConfigField("String", "COINMARKETCAP_KEY", apikeyProperties['COINMARKETCAP_KEY'])
-        buildConfigField("String", "COINAPI_KEY", apikeyProperties['COINAPI_KEY'])
+        buildConfigField("String", "COINAPI_KEY_1", apikeyProperties['COINAPI_KEY_1'])
+        buildConfigField("String", "COINAPI_KEY_2", apikeyProperties['COINAPI_KEY_2'])
         buildConfigField("String", "COINAPI_AUTH_HEADER", apikeyProperties['COINAPI_AUTH_HEADER'])
 
     }
@@ -80,6 +81,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
 
 }
 
