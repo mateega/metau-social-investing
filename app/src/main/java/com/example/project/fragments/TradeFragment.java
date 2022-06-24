@@ -269,6 +269,7 @@ public class TradeFragment extends Fragment {
                 .addHeader("X-CMC_PRO_API_KEY", BuildConfig.COINMARKETCAP_KEY)
                 .build();
 
+        String finalCoinsStr = coinsStr;
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -305,6 +306,7 @@ public class TradeFragment extends Fragment {
                                 public void run() {
                                     adapter.notifyDataSetChanged();
                                     setTopCoins = true;
+                                    getCoinsImages(client, coins, finalCoinsStr, search);
                                 }
                             });
                         }
@@ -314,7 +316,9 @@ public class TradeFragment extends Fragment {
                 }
             }
         });
-        getCoinsImages(client, coins, coinsStr, search);
+        if (search) {
+            getCoinsImages(client, coins, finalCoinsStr, search);
+        }
     }
 
     private void createCoinObject(HashMap<String, String> variables, int i) {
