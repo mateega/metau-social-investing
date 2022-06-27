@@ -269,7 +269,7 @@
             android:text="Sell" />
 
         <Button
-            android:id="@+id/btnGoogle"
+            android:id="@+id/btnBuy"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"

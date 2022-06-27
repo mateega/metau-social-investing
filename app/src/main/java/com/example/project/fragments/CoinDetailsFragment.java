@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -81,6 +82,11 @@ public class CoinDetailsFragment extends Fragment {
     String rank;
     String imageUrl;
 
+    Button btnSell;
+    Button btnBuy;
+
+    Bundle bundle;
+
 
     public CoinDetailsFragment() {
         // Required empty public constructor
@@ -122,6 +128,14 @@ public class CoinDetailsFragment extends Fragment {
         rank = getArguments().getString("rank");
         imageUrl = getArguments().getString("imageUrl");
 
+        bundle = new Bundle();
+        bundle.putString("name", name);
+        bundle.putString("ticker", ticker);
+        bundle.putString("price", price);
+        bundle.putString("priceChange", price);
+        bundle.putString("rank", rank);
+        bundle.putString("imageUrl", imageUrl);
+
         // Data points below chart
         // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
 //        high = getArguments().getString("high");
@@ -146,6 +160,8 @@ public class CoinDetailsFragment extends Fragment {
         ivCoinImage = view.findViewById(R.id.ivCoinImage);
         //tvChart = view.findViewById(R.id.tvChart);
         wbChart = view.findViewById(R.id.wvChart);
+        btnSell = view.findViewById(R.id.btnSell);
+        btnBuy = view.findViewById(R.id.btnBuy);
 
         // Data points below chart
         // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
@@ -206,5 +222,22 @@ public class CoinDetailsFragment extends Fragment {
                 "<!-- TradingView Widget END -->";
 
         wbChart.loadData(chartStr, "text/html; charset=UTF-8", null);
+
+        btnSell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Fragment tradePaymentFragment = new TradePaymentFragment();
+                tradePaymentFragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, tradePaymentFragment).addToBackStack(null).commit();
+            }
+        });
     }
 }

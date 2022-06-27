@@ -205,7 +205,6 @@ Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since 
 13. ~~List group members in settings page~~
 14. Toggle between investing and non-investing member in settings page [settings page complete]
 15. Set up trade info page (TradingView API used) 
-16. Give trade recommendations on trade page (optional, if I feel that the trade search page is too blank) [trade pages complete]
+~~16. Give trade recommendations on trade page (optional, if I feel that the trade search page is too blank)~~
 17. Set up chat for each group
 18. Make custom charts for the trade:info page using past data
-19. 

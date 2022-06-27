@@ -4,113 +4,75 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragments.DepositFragment">
+    tools:context=".fragments.TradePaymentFragment">
 
-    <TextView
-        android:id="@+id/tvDeposit"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="20dp"
-        android:fontFamily="@font/britanica_black"
-        android:letterSpacing="0.02"
-        android:text="Deposit"
-        android:textColor="@color/black"
-        android:textSize="35sp" />
+        android:orientation="vertical"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="30dp"
+        android:paddingBottom="30dp"
+        android:background="@drawable/layout_rounded">
 
-    <TextView
-        android:id="@+id/tvCurrentAccountAssets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
-        android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/helveticaneue_medium"
-        android:textSize="18sp"
-        android:text="Current account assets:" />
+        <ImageButton
+            android:id="@+id/ibBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24_white" />
 
-    <TextView
-        android:id="@+id/tvDepositAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/britanica_bold"
-        android:textColor="@color/black"
-        android:textSize="50sp"
-        android:text="$9,400.00" />
+        <TextView
+            android:id="@+id/tvBuy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="-20dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/britanica_black"
+            android:letterSpacing="0.02"
+            android:text="Buy"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            tools:text="Buy Solona" />
 
+        <TextView
+            android:id="@+id/tvBuyAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/britanica_bold"
+            android:textColor="@color/white"
+            android:textSize="50sp"
+            android:text="$9,400.00" />
 
-<!--    Deposit interval commented out until functionality is implemented-->
-<!--    <LinearLayout-->
-<!--        android:id="@+id/layDepositInterval"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="50dp"-->
-<!--        android:layout_marginHorizontal="20dp"-->
-<!--        android:weightSum="4"-->
-<!--        android:orientation="horizontal">-->
-
-<!--        <Button-->
-<!--            android:id="@+id/btnOnce"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:textSize="12sp"-->
-<!--            android:paddingHorizontal="0dp"-->
-<!--            android:text="Once"-->
-<!--            android:textAllCaps="false" />-->
-<!--        <Button-->
-<!--            android:id="@+id/btnWeekly"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:textSize="12sp"-->
-<!--            android:paddingHorizontal="0dp"-->
-<!--            android:text="Weekly"-->
-<!--            android:textAllCaps="false"/>-->
-<!--        <Button-->
-<!--            android:id="@+id/btnMonthly"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:textSize="12sp"-->
-<!--            android:paddingHorizontal="0dp"-->
-<!--            android:text="Monthly"-->
-<!--            android:textAllCaps="false"/>-->
-<!--        <Button-->
-<!--            android:id="@+id/btnYearly"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:textSize="12sp"-->
-<!--            android:paddingHorizontal="0dp"-->
-<!--            android:text="Yearly"-->
-<!--            android:textAllCaps="false"/>-->
-<!--    </LinearLayout>-->
+        <TextView
+            android:id="@+id/tvCurrentAccountAssets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/helveticaneue_medium"
+            android:textColor="@color/light_grey"
+            android:textSize="18sp"
+            android:text="You have available" />
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80sp"
-        android:layout_marginHorizontal="40dp"
-        >
+        android:layout_marginTop="40dp"
+        android:layout_marginHorizontal="40dp">
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:weightSum="3"
-            >
+            android:weightSum="3">
 
             <Button
                 android:id="@+id/btn1"
@@ -260,8 +222,7 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:rotation="180"
-                android:src="@drawable/ic_baseline_arrow_right_alt_24"
-                 />
+                android:src="@drawable/ic_baseline_arrow_right_alt_24" />
         </TableRow>
     </TableLayout>
 
@@ -285,17 +246,16 @@
             android:textAllCaps="false"/>
 
         <Button
-            android:id="@+id/btnDeposit"
+            android:id="@+id/btnBuy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
             android:textSize="16sp"
             android:layout_weight="1"
             android:background="@drawable/layout_rounded"
-            android:text="Deposit"
+            android:text="Confirm Buy"
             android:fontFamily="@font/helveticaneue_medium"
             android:textAllCaps="false"/>
-
     </LinearLayout>
 
 </LinearLayout>
