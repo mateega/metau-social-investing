@@ -207,3 +207,5 @@ Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since 
 15. Set up trade info page (TradingView API used) 
 16. Give trade recommendations on trade page (optional, if I feel that the trade search page is too blank) [trade pages complete]
 17. Set up chat for each group
+18. Make custom charts for the trade:info page using past data
+19. 

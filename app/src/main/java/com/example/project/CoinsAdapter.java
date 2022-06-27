@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.project.fragments.CoinDetailsFragment;
 
 import java.util.List;
 
@@ -20,6 +24,13 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
     private Context context;
     private List<Coin> coins;
     private String TAG = "COINS ADAPTER";
+
+    public interface ClickListener {
+
+        void onPositionClicked(int position);
+
+        void onLongClicked(int position);
+    }
 
     public CoinsAdapter(Context context, List<Coin> coins) {
         this.context = context;
@@ -54,7 +65,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         return coins.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView ivCoinImage;
         private TextView tvRank;
@@ -71,6 +82,8 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
             tvCoinTicker = itemView.findViewById(R.id.tvCoinTicker);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvPriceChange = itemView.findViewById(R.id.tvPriceChange);
+
+            itemView.setOnClickListener((View.OnClickListener) this);
         }
 
         public void bind(Coin coin) {
@@ -90,6 +103,24 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
             if (imageUrl != null) {
                 Glide.with(context).load(imageUrl).into(ivCoinImage);
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("name", coins.get(position).getName());
+            bundle.putString("ticker", coins.get(position).getTicker());
+            bundle.putString("price", coins.get(position).getPrice());
+            bundle.putString("priceChange", coins.get(position).getPriceChange());
+            bundle.putString("rank", coins.get(position).getRank());
+            bundle.putString("imageUrl", coins.get(position).getImageUrl());
+
+            AppCompatActivity activity = (AppCompatActivity) v.getContext();
+            Fragment coinDetailsFragment = new CoinDetailsFragment();
+            coinDetailsFragment.setArguments(bundle);
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, coinDetailsFragment).addToBackStack(null).commit();
         }
     }
 }

@@ -84,6 +84,7 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    implementation 'com.tradingview:lightweightcharts:3.8.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

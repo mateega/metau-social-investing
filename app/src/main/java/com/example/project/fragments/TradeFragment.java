@@ -8,7 +8,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +19,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -63,7 +67,6 @@ import java.util.Map;
  */
 public class TradeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -71,7 +74,6 @@ public class TradeFragment extends Fragment {
 
     EditText etSearch;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private String searchText;
@@ -94,6 +96,13 @@ public class TradeFragment extends Fragment {
     ImageView ivCoinImageSearch;
 
     TextView tvTopCoins;
+
+    String nameSearched;
+    String tickerSearched;
+    String priceSearched;
+    String priceChangeSearched;
+    String rankSearched;
+    String imageUrlSearched;
 
     public TradeFragment() {
         // Required empty public constructor
@@ -196,6 +205,43 @@ public class TradeFragment extends Fragment {
                 }
             }
         });
+
+        layCoinSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString("name", nameSearched);
+                bundle.putString("ticker", tickerSearched);
+                bundle.putString("price", priceSearched);
+                bundle.putString("priceChange", priceChangeSearched);
+                bundle.putString("rank", rankSearched);
+                bundle.putString("imageUrl", imageUrlSearched);
+
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Fragment coinDetailsFragment = new CoinDetailsFragment();
+                coinDetailsFragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, coinDetailsFragment).addToBackStack(null).commit();
+            }
+        });
+
+        rvCoins.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+        });
+
+
+
     }
 
     private void toggleCoinViews(boolean searching) {
@@ -292,7 +338,7 @@ public class TradeFragment extends Fragment {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setSearchViews(variables.get("name"), variables.get("ticker"), variables.get("price"), variables.get("priceChange"));
+                                        setSearchViews(variables.get("name"), variables.get("ticker"), variables.get("price"), variables.get("priceChange"), variables.get("rank"));
                                     }
                                 });
                             } else {
@@ -328,6 +374,13 @@ public class TradeFragment extends Fragment {
         jsonCoin.addProperty("priceChange", variables.get("priceChange"));
         jsonCoin.addProperty("rank", "#" + i);
 
+        // Data points below chart
+        // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
+//        jsonCoin.addProperty("high", variables.get("high"));
+//        jsonCoin.addProperty("low", variables.get("low"));
+//        jsonCoin.addProperty("open", variables.get("open"));
+//        jsonCoin.addProperty("volume", variables.get("volume"));
+
         actualCoin = gson.fromJson(jsonCoin, Coin.class);
         coinsForRV.add(actualCoin);
     }
@@ -359,6 +412,12 @@ public class TradeFragment extends Fragment {
         variables.put("price", priceStr);
         variables.put("priceChange", changeStr);
 
+        // Data points below chart
+        // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
+//        variables.put("high", high);
+//        variables.put("low", low);
+//        variables.put("open", open);
+//        variables.put("volume", volume);
         return variables;
     }
 
@@ -391,6 +450,7 @@ public class TradeFragment extends Fragment {
                         if (search) {
                             JSONObject cryptocurrency = data.getJSONObject(coins.get(0));
                             String logo = cryptocurrency.getString("logo");
+                            imageUrlSearched = logo;
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -428,7 +488,13 @@ public class TradeFragment extends Fragment {
         });
     }
 
-    private void setSearchViews(String name, String ticker, String price, String priceChange) {
+    private void setSearchViews(String name, String ticker, String price, String priceChange, String rank) {
+        nameSearched = name;
+        tickerSearched = ticker;
+        priceSearched = price;
+        priceChangeSearched = priceChange;
+        rankSearched = rank;
+
         int color = Color.parseColor("#47cd54");
         if (priceChange.charAt(0) == '-') {
             color = Color.parseColor("#fe5857");
