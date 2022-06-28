@@ -1,6 +1,7 @@
 package com.example.project;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,15 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.project.fragments.CoinDetailsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
@@ -44,6 +50,16 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
     private String groupId;
     private String TAG = "HOLDING ADAPTER";
     private FirebaseFirestore db;
+    private Gson gson;
+    private JsonObject jsonCoin;
+    Bundle bundle;
+
+    public interface ClickListener {
+
+        void onPositionClicked(int position);
+
+        void onLongClicked(int position);
+    }
 
     public HoldingAdapter(Context context, List<ArrayList<String>> holdings, String groupId) {
         this.context = context;
@@ -91,6 +107,8 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
             tvCoinName = itemView.findViewById(R.id.tvCoinName);
             tvDollarCount = itemView.findViewById(R.id.tvDollarCount);
             tvCryptoCount = itemView.findViewById(R.id.tvCryptoCount);
+
+            itemView.setOnClickListener((View.OnClickListener) this);
         }
 
         // holding field corresponds to the ticker of a coin (could be multiple trades with this ticker)
@@ -117,7 +135,130 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
         public void onClick(View v) {
             int position = getAdapterPosition();
             Log.i(TAG, String.valueOf(position));
+            bundle = new Bundle();
+            String coin = holdings.get(position).get(0);
+            getCoinData(coin);
         }
+    }
+
+    private void getCoinData(String coin) {
+        OkHttpClient client = new OkHttpClient();
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest").newBuilder();
+        urlBuilder.addQueryParameter("symbol",coin);
+        urlBuilder.addQueryParameter("convert","USD");
+        String url = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader(HttpHeaders.ACCEPT, "application/json")
+                .addHeader("X-CMC_PRO_API_KEY", BuildConfig.COINMARKETCAP_KEY)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                    String jsonData = responseBody.string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonData);
+                        JSONObject data = jsonObject.getJSONObject("data");
+
+                        gson = new Gson();
+                        jsonCoin = new JsonObject();
+                        HashMap<String, String> variables = getCoinVariables(data, coin);
+
+                        getCoinImageForDetails(client, coin);
+
+                        bundle.putString("name", variables.get("name"));
+                        bundle.putString("ticker", variables.get("ticker"));
+                        bundle.putString("price", variables.get("price"));
+                        bundle.putString("priceChange", variables.get("priceChange"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void getCoinImageForDetails(OkHttpClient client, String coin) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/info").newBuilder();
+        urlBuilder.addQueryParameter("symbol",coin);
+        String url = urlBuilder.build().toString();
+
+        Request imageRequest = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader(HttpHeaders.ACCEPT, "application/json")
+                .addHeader("X-CMC_PRO_API_KEY", BuildConfig.COINMARKETCAP_KEY)
+                .build();
+
+        client.newCall(imageRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                    String jsonData = responseBody.string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonData);
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        JSONObject cryptocurrency = data.getJSONObject(coin);
+                        String logo = cryptocurrency.getString("logo");
+                        bundle.putString("imageUrl",logo);
+
+                        AppCompatActivity activity = (AppCompatActivity) context;
+                        Fragment coinDetailsFragment = new CoinDetailsFragment();
+                        coinDetailsFragment.setArguments(bundle);
+                        activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, coinDetailsFragment).addToBackStack(null).commit();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private HashMap<String, String> getCoinVariables(JSONObject data, String coin) throws JSONException {
+        HashMap<String, String> variables = new HashMap<String, String>();
+
+        JSONObject cryptocurrency = data.getJSONObject(coin);
+        String name = cryptocurrency.getString("name");
+        String ticker = cryptocurrency.getString("symbol");
+        JSONObject quote = cryptocurrency.getJSONObject("quote");
+        JSONObject usd = quote.getJSONObject("USD");
+        String priceStr = usd.getString("price");
+        Double priceDbl = Double.parseDouble(priceStr);
+        DecimalFormat formatter1 = new DecimalFormat("#,###.00");
+        if (priceStr.charAt(0) == '0') {
+            priceStr = "$0" + formatter1.format(priceDbl);
+        } else {
+            priceStr = "$" + formatter1.format(priceDbl);
+        }
+
+        String changeStr = usd.getString("percent_change_24h");
+        Double changeDbl = Double.parseDouble(changeStr);
+        DecimalFormat formatter2 = new DecimalFormat("##.##");
+        changeStr = formatter2.format(changeDbl) + "%";
+
+        variables.put("name", name);
+        variables.put("ticker", ticker);
+        variables.put("price", priceStr);
+        variables.put("priceChange", changeStr);
+
+        return variables;
     }
 
     private void getCoinImage(String ticker) {
