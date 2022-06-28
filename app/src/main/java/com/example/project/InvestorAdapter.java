@@ -90,7 +90,7 @@ public class InvestorAdapter extends RecyclerView.Adapter<InvestorAdapter.ViewHo
                             tvName.setText(memberName);
                             String profilePictureUrl = data.get("profilePicture").toString();
                             if (profilePictureUrl != null) {
-                                Glide.with(context).load(profilePictureUrl).into(ivProfileImage);
+                               Glide.with(context).load(profilePictureUrl).into(ivProfileImage);
                             }
 
                         } else {

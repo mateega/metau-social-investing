@@ -308,7 +308,7 @@ public class TradePaymentFragment extends Fragment {
 
                             trade.put("direction", tradeDirection);
                             trade.put ("lot", tradeLot);
-                            trade.put("price", price);
+                            trade.put("price", priceNumber);
                             trade.put("ticker", ticker);
                             trade.put("time", tradeTimestamp);
                             trade.put("trader", userId);

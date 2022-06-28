@@ -12,7 +12,7 @@
         android:id="@+id/tvHello"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="50dp"
         android:layout_marginHorizontal="20dp"
         android:fontFamily="@font/britanica_black"
         android:textColor="@color/black"
@@ -32,7 +32,7 @@
         android:id="@+id/layRow1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginHorizontal="20dp"
         android:weightSum="2"
         android:orientation="horizontal">
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
-            android:paddingVertical="50dp"
+            android:paddingVertical="30dp"
             android:layout_weight="1"
             android:background="@drawable/layout_rounded"
             android:orientation="vertical">
@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
-            android:paddingVertical="50dp"
+            android:paddingVertical="30dp"
             android:layout_weight="1"
             android:background="@drawable/layout_rounded"
             android:orientation="vertical">
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
-            android:paddingVertical="50dp"
+            android:paddingVertical="30dp"
             android:layout_weight="1"
             android:background="@drawable/layout_rounded"
             android:orientation="vertical">
@@ -159,7 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
-            android:paddingVertical="50dp"
+            android:paddingVertical="30dp"
             android:layout_weight="1"
             android:background="@drawable/layout_rounded"
             android:orientation="vertical">
@@ -190,5 +190,25 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvHoldings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:fontFamily="@font/britanica_black"
+        android:letterSpacing="0.02"
+        android:text="Holdings"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHoldings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="40dp" />
 
 </LinearLayout>

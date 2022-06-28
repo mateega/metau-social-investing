@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.project.HoldingAdapter;
+import com.example.project.MemberAdapter;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,9 +33,13 @@ import java.lang.reflect.Array;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,6 +69,10 @@ public class OverviewFragment extends Fragment {
     TextView tvGroupAssetsCount;
     TextView tvPersonalAssetsCount;
     TextView tvRecentTradeDate;
+
+    private RecyclerView rvHoldings;
+    protected List<ArrayList<String>> holdings;
+    protected HoldingAdapter holdingAdapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -145,6 +157,14 @@ public class OverviewFragment extends Fragment {
         }
 
         String groupId = getActivity().getIntent().getStringExtra("groupName");
+
+        rvHoldings = view.findViewById(R.id.rvHoldings);
+        holdings = new ArrayList<>();
+        holdingAdapter = new HoldingAdapter(getContext(), holdings, groupId);
+        rvHoldings.setAdapter(holdingAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvHoldings.setLayoutManager(linearLayoutManager);
+
         if (groupId != null) {
             DocumentReference docRef = db.collection("groups").document(groupId);
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -160,6 +180,7 @@ public class OverviewFragment extends Fragment {
                             setMemberCount(data);
                             setGroupAssets(data);
                             setRecentTrade(data);
+                            setHoldings(data);
 
                         } else {
                             Log.d(TAG, "No such document");
@@ -170,6 +191,50 @@ public class OverviewFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void setHoldings(Map<String, Object> data) {
+        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
+        HashMap<String, ArrayList<String>> tradesMap = new HashMap<String, ArrayList<String>>();
+        // trade array list format: [ticker, qnt. in crypto, qnt. in USD]
+
+        for (int i = 0; i < trades.size(); i++) {
+            Map<String, Object> trade = trades.get(i);
+            String tradeDirection = trade.get("direction").toString();
+            Double tradeLot = Double.valueOf(trade.get("lot").toString());
+            Double tradePrice = Double.valueOf(trade.get("price").toString());
+            String tradeTicker = trade.get("ticker").toString();
+
+            if (tradesMap.containsKey(tradeTicker)) {
+                ArrayList<String> oldTrade = tradesMap.get(tradeTicker);
+                String oldLot = oldTrade.get(1);
+                String oldSizeUSD = oldTrade.get(2);
+
+                if (tradeDirection.equals("buy")) {
+                    String newTradeLot = String.valueOf(Double.parseDouble(oldLot) + tradeLot);
+                    String newTradeSizeUSD = String.valueOf(Double.parseDouble(oldSizeUSD) + (tradeLot * tradePrice));
+
+                    ArrayList<String> tradeList = new ArrayList<String>();
+                    tradeList.add(tradeTicker);
+                    tradeList.add(newTradeLot);
+                    tradeList.add(newTradeSizeUSD);
+
+                    tradesMap.replace(tradeTicker, tradeList);
+                }
+            } else {
+                if (tradeDirection.equals("buy")) {
+                    ArrayList<String> tradeList = new ArrayList<String>();
+                    String tradeSizeUSD = String.valueOf(tradeLot * tradePrice);
+                    tradeList.add(tradeTicker);
+                    tradeList.add(String.valueOf(tradeLot));
+                    tradeList.add(tradeSizeUSD);
+                    tradesMap.put(tradeTicker, tradeList);
+                }
+            }
+        }
+        holdings.addAll(tradesMap.values());
+        holdingAdapter.notifyDataSetChanged();
+
     }
 
     private void setGroupName(Map<String, Object> data) {
