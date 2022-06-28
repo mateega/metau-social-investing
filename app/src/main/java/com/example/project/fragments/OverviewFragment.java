@@ -210,17 +210,22 @@ public class OverviewFragment extends Fragment {
                 String oldLot = oldTrade.get(1);
                 String oldSizeUSD = oldTrade.get(2);
 
+                String newTradeLot;
+                String newTradeSizeUSD;
+                ArrayList<String> tradeList = new ArrayList<String>();
                 if (tradeDirection.equals("buy")) {
-                    String newTradeLot = String.valueOf(Double.parseDouble(oldLot) + tradeLot);
-                    String newTradeSizeUSD = String.valueOf(Double.parseDouble(oldSizeUSD) + (tradeLot * tradePrice));
-
-                    ArrayList<String> tradeList = new ArrayList<String>();
-                    tradeList.add(tradeTicker);
-                    tradeList.add(newTradeLot);
-                    tradeList.add(newTradeSizeUSD);
-
-                    tradesMap.replace(tradeTicker, tradeList);
+                    newTradeLot = String.valueOf(Double.parseDouble(oldLot) + tradeLot);
+                    newTradeSizeUSD = String.valueOf(Double.parseDouble(oldSizeUSD) + (tradeLot * tradePrice));
+                } else {
+                    newTradeLot = String.valueOf(Double.parseDouble(oldLot) - tradeLot);
+                    newTradeSizeUSD = String.valueOf(Double.parseDouble(oldSizeUSD) - (tradeLot * tradePrice));
                 }
+
+                tradeList.add(tradeTicker);
+                tradeList.add(newTradeLot);
+                tradeList.add(newTradeSizeUSD);
+                tradesMap.replace(tradeTicker, tradeList);
+
             } else {
                 if (tradeDirection.equals("buy")) {
                     ArrayList<String> tradeList = new ArrayList<String>();
@@ -230,6 +235,8 @@ public class OverviewFragment extends Fragment {
                     tradeList.add(tradeSizeUSD);
                     tradesMap.put(tradeTicker, tradeList);
                 }
+                // I don't believe an else statement is needed here since a group must buy an asset
+                // before they sell it. This buy will come earlier in the trade list
             }
         }
         holdings.addAll(tradesMap.values());

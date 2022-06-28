@@ -57,13 +57,15 @@ public class TradePaymentFragment extends Fragment {
     String priceChange;
     String rank;
     String imageUrl;
+    String direction;
+    Boolean buy;
 
     ImageButton ibBack;
 
     TextView tvCurrentAccountAssets;
-    TextView tvBuyAmount;
+    TextView tvBuySellAmount;
 
-    TextView tvBuy;
+    TextView tvBuySell;
 
     Button btn1;
     Button btn2;
@@ -80,13 +82,15 @@ public class TradePaymentFragment extends Fragment {
     ImageButton btnDelete;
 
     Button btnCancel;
-    Button btnBuy;
+    Button btnTrade;
 
     Double buyAmount;
     String buyAmountStr;
     int numLocation;
     String currentAssets;
     Double assets;
+
+    Double sellAssets;
 
     Bundle bundle;
 
@@ -129,6 +133,12 @@ public class TradePaymentFragment extends Fragment {
         priceChange = getArguments().getString("priceChange");
         rank = getArguments().getString("rank");
         imageUrl = getArguments().getString("imageUrl");
+        direction = getArguments().getString("direction");
+        if (direction.equals("buy")) {
+            buy = true;
+        } else {
+            buy = false;
+        }
 
         bundle = new Bundle();
         bundle.putString("name", name);
@@ -137,6 +147,7 @@ public class TradePaymentFragment extends Fragment {
         bundle.putString("priceChange", price);
         bundle.putString("rank", rank);
         bundle.putString("imageUrl", imageUrl);
+        bundle.putString("direction", direction);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_trade_payment, container, false);
@@ -153,17 +164,21 @@ public class TradePaymentFragment extends Fragment {
         ibBack = view.findViewById(R.id.ibBack);
 
         tvCurrentAccountAssets = view.findViewById(R.id.tvCurrentAccountAssets);
-        getCurrentAssets();
+        getCurrentBuyAssets();
 
-        tvBuyAmount = view.findViewById(R.id.tvBuyAmount);
-        tvBuyAmount.setText(buyAmountStr);
+        tvBuySellAmount = view.findViewById(R.id.tvBuySellAmount);
+        tvBuySellAmount.setText(buyAmountStr);
 
         buyAmount = 0.00;
-        setBuyAmount(buyAmount);
+        setBuySellAmount(buyAmount);
         numLocation = 0;
 
-        tvBuy = view.findViewById(R.id.tvBuy);
-        tvBuy.setText("Buy " + name);
+        tvBuySell = view.findViewById(R.id.tvBuySell);
+        if (buy) {
+            tvBuySell.setText("Buy " + name);
+        } else {
+            tvBuySell.setText("Sell " + name);
+        }
 
         btn1 = view.findViewById(R.id.btn1);
         btn2 = view.findViewById(R.id.btn2);
@@ -180,7 +195,7 @@ public class TradePaymentFragment extends Fragment {
         btnDelete = view.findViewById(R.id.btnDelete);
 
         btnCancel = view.findViewById(R.id.btnCancel);
-        btnBuy = view.findViewById(R.id.btnBuy);
+        btnTrade = view.findViewById(R.id.btnTrade);
 
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,16 +267,18 @@ public class TradePaymentFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 buyAmount = 0.00;
-                setBuyAmount(buyAmount);
+                setBuySellAmount(buyAmount);
             }
         });
-        btnBuy.setOnClickListener(new View.OnClickListener() {
+        btnTrade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buy();
+                trade();
             }
         });
-
+        if (!buy) {
+            btnTrade.setText("Confirm Sell");
+        }
         ibBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,65 +291,122 @@ public class TradePaymentFragment extends Fragment {
 
     }
 
-    private void buy() {
+    private void trade() {
         numLocation = 0;
 
-        if (buyAmount > assets) {
-            Toast.makeText(getActivity().getApplicationContext(), "Account has insufficient funds", Toast.LENGTH_SHORT).show();
-        } else {
-            String groupId = getActivity().getIntent().getStringExtra("groupName");
-            DocumentReference docRef = db.collection("groups").document(groupId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
+        if (buy) {
+            if (buyAmount > assets) {
+                Toast.makeText(getActivity().getApplicationContext(), "Account has insufficient funds", Toast.LENGTH_SHORT).show();
+            } else {
+                String groupId = getActivity().getIntent().getStringExtra("groupName");
+                DocumentReference docRef = db.collection("groups").document(groupId);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Map<String, Object> data = document.getData();
+                                Log.d(TAG, "DocumentSnapshot data: " + data);
 
-                            ArrayList<Object> trades = (ArrayList) data.get("trades");
-                            HashMap<String, Object> trade = new HashMap<>();
+                                ArrayList<Object> trades = (ArrayList) data.get("trades");
+                                HashMap<String, Object> trade = new HashMap<>();
 
-                            String tradeDirection = "buy";
-                            NumberFormat format = NumberFormat.getCurrencyInstance();
-                            Number priceNumber = null;
-                            try {
-                                priceNumber = format.parse(price);
-                                System.out.println(priceNumber);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                                String tradeDirection = "buy";
+                                NumberFormat format = NumberFormat.getCurrencyInstance();
+                                Number priceNumber = null;
+                                try {
+                                    priceNumber = format.parse(price);
+                                    System.out.println(priceNumber);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                Double tradeLot = buyAmount / ((Double) priceNumber);
+                                Timestamp tradeTimestamp = Timestamp.now();
+
+                                trade.put("direction", tradeDirection);
+                                trade.put ("lot", tradeLot);
+                                trade.put("price", priceNumber);
+                                trade.put("ticker", ticker);
+                                trade.put("time", tradeTimestamp);
+                                trade.put("trader", userId);
+
+                                trades.add(trade);
+                                Map<String, Object> updatedData = new HashMap<>();
+                                updatedData.put("trades", trades);
+                                db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+                                updateUserBuyBalance(buyAmount);
+                                buyAmount = 0.00;
+                                setBuySellAmount(buyAmount);
+                                Toast.makeText(getActivity().getApplicationContext(), "Trade confirmed", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.d(TAG, "No such document");
                             }
-                            Double tradeLot = buyAmount / ((Double) priceNumber);
-                            Timestamp tradeTimestamp = Timestamp.now();
-
-                            trade.put("direction", tradeDirection);
-                            trade.put ("lot", tradeLot);
-                            trade.put("price", priceNumber);
-                            trade.put("ticker", ticker);
-                            trade.put("time", tradeTimestamp);
-                            trade.put("trader", userId);
-
-                            trades.add(trade);
-                            Map<String, Object> updatedData = new HashMap<>();
-                            updatedData.put("trades", trades);
-                            db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
-                            updateUserBalance(buyAmount);
-                            buyAmount = 0.00;
-                            setBuyAmount(buyAmount);
-                            Toast.makeText(getActivity().getApplicationContext(), "Trade confirmed", Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d(TAG, "No such document");
+                            Log.d(TAG, "get failed with ", task.getException());
                         }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
                     }
-                }
-            });
+                });
+            }
+        } else {
+            // selling
+            if (buyAmount > sellAssets) {
+                Toast.makeText(getActivity().getApplicationContext(), "Account has insufficient holdings", Toast.LENGTH_SHORT).show();
+            } else {
+                String groupId = getActivity().getIntent().getStringExtra("groupName");
+                DocumentReference docRef = db.collection("groups").document(groupId);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Map<String, Object> data = document.getData();
+                                Log.d(TAG, "DocumentSnapshot data: " + data);
+
+                                ArrayList<Object> trades = (ArrayList) data.get("trades");
+                                HashMap<String, Object> trade = new HashMap<>();
+
+                                String tradeDirection = "sell";
+                                NumberFormat format = NumberFormat.getCurrencyInstance();
+                                Number priceNumber = null;
+                                try {
+                                    priceNumber = format.parse(price);
+                                    System.out.println(priceNumber);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                Double tradeLot = buyAmount / ((Double) priceNumber);
+                                Timestamp tradeTimestamp = Timestamp.now();
+
+                                trade.put("direction", tradeDirection);
+                                trade.put ("lot", tradeLot);
+                                trade.put("price", priceNumber);
+                                trade.put("ticker", ticker);
+                                trade.put("time", tradeTimestamp);
+                                trade.put("trader", userId);
+
+                                trades.add(trade);
+                                Map<String, Object> updatedData = new HashMap<>();
+                                updatedData.put("trades", trades);
+                                db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+                                updateUserBuyBalance(buyAmount);
+                                buyAmount = 0.00;
+                                setBuySellAmount(buyAmount);
+                                Toast.makeText(getActivity().getApplicationContext(), "Trade confirmed", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+            }
         }
     }
 
-    private void updateUserBalance(Double buyAmount) {
+    private void updateUserBuyBalance(Double buyAmount) {
         DocumentReference docRef = db.collection("users").document(userId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -340,19 +414,23 @@ public class TradePaymentFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Map<String, Object> data = document.getData();
-                        Log.d(TAG, "DocumentSnapshot data: " + data);
+                        if (buy) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + data);
 
-                        Double assets = (Double) data.get("assets");
-                        assets = assets - buyAmount;
+                            Double assets = (Double) data.get("assets");
+                            assets = assets - buyAmount;
 
-                        Map<String, Object> updatedData = new HashMap<>();
-                        updatedData.put("assets", assets);
-                        db.collection("users").document(userId).set(updatedData, SetOptions.merge());
+                            Map<String, Object> updatedData = new HashMap<>();
+                            updatedData.put("assets", assets);
+                            db.collection("users").document(userId).set(updatedData, SetOptions.merge());
 
-                        DecimalFormat formatter = new DecimalFormat("#,###.00");
-                        currentAssets = "You have $" + formatter.format(assets) + " available";
-                        tvCurrentAccountAssets.setText(currentAssets);
+                            DecimalFormat formatter = new DecimalFormat("#,###.00");
+                            currentAssets = "You have $" + formatter.format(assets) + " available";
+                            tvCurrentAccountAssets.setText(currentAssets);
+                        } else {
+                            getSellAssets();
+                        }
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -369,7 +447,7 @@ public class TradePaymentFragment extends Fragment {
         if (buyAmount < 0.01) {
             buyAmount = 0.00;
         }
-        setBuyAmount(buyAmount);
+        setBuySellAmount(buyAmount);
     }
 
     private void clickNumber(int i) {
@@ -378,11 +456,47 @@ public class TradePaymentFragment extends Fragment {
             return;
         }
         buyAmount = buyAmount*10 + (i * 0.01);
-        setBuyAmount(buyAmount);
+        setBuySellAmount(buyAmount);
     }
 
-    private void getCurrentAssets() {
-        DocumentReference docRef = db.collection("users").document(userId);
+    private void getCurrentBuyAssets() {
+        if (buy) {
+            DocumentReference docRef = db.collection("users").document(userId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + data);
+                            assets = (Double) data.get("assets");
+                            if (assets == 0.00) {
+                                currentAssets = "You have $0.00 available";
+                                tvCurrentAccountAssets.setText(currentAssets);
+                            } else {
+                                DecimalFormat formatter = new DecimalFormat("#,###.00");
+                                currentAssets = "You have $" + formatter.format(assets) + " available";
+                                tvCurrentAccountAssets.setText(currentAssets);
+                            }
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        } else {
+            getSellAssets();
+        }
+    }
+
+    private void getSellAssets() {
+        final Double[] holdingInUSD = {0.00};
+
+        String groupId = getActivity().getIntent().getStringExtra("groupName");
+        DocumentReference docRef = db.collection("groups").document(groupId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -391,16 +505,34 @@ public class TradePaymentFragment extends Fragment {
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
                         Log.d(TAG, "DocumentSnapshot data: " + data);
-                        assets = (Double) data.get("assets");
-                        if (assets == 0.00) {
-                            currentAssets = "You have $0.00 available";
-                            tvCurrentAccountAssets.setText(currentAssets);
+
+                        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
+
+                        for (int i = 0; i < trades.size(); i++) {
+                            Map<String, Object> trade = trades.get(i);
+                            String tradeTicker = trade.get("ticker").toString();
+
+                            if (tradeTicker.equals(ticker)) {
+                                String tradeDirection = trade.get("direction").toString();
+                                Double tradeLot = Double.valueOf(trade.get("lot").toString());
+                                Double tradePrice = Double.valueOf(trade.get("price").toString());
+
+                                Double tradeSizeUSD = tradeLot * tradePrice;
+                                if (tradeDirection.equals("buy")) {
+                                    holdingInUSD[0] += tradeSizeUSD;
+                                } else {
+                                    holdingInUSD[0] -= tradeSizeUSD;
+                                }
+                            }
+                        }
+                        sellAssets = holdingInUSD[0];
+                        if (holdingInUSD[0] == 0.00) {
+                            currentAssets = "You have $0.00 in " + ticker;
                         } else {
                             DecimalFormat formatter = new DecimalFormat("#,###.00");
-                            currentAssets = "You have $" + formatter.format(assets) + " available";
-                            tvCurrentAccountAssets.setText(currentAssets);
+                            currentAssets = "You have $" + formatter.format(holdingInUSD[0]) + " in " + ticker;
                         }
-
+                        tvCurrentAccountAssets.setText(currentAssets);
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -411,14 +543,13 @@ public class TradePaymentFragment extends Fragment {
         });
     }
 
-    private void setBuyAmount(Double amount) {
+    private void setBuySellAmount(Double amount) {
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
         if (amount < 1) {
-            DecimalFormat formatter = new DecimalFormat("#,###.00");
             buyAmountStr = "$0" + formatter.format(amount);
         } else {
-            DecimalFormat formatter = new DecimalFormat("#,###.00");
             buyAmountStr = "$" + formatter.format(amount);
         }
-        tvBuyAmount.setText(buyAmountStr);
+        tvBuySellAmount.setText(buyAmountStr);
     }
 }

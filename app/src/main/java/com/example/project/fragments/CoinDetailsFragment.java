@@ -226,13 +226,18 @@ public class CoinDetailsFragment extends Fragment {
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                bundle.putString("direction", "sell");
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Fragment tradePaymentFragment = new TradePaymentFragment();
+                tradePaymentFragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, tradePaymentFragment).addToBackStack(null).commit();
             }
         });
 
         btnBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bundle.putString("direction", "buy");
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Fragment tradePaymentFragment = new TradePaymentFragment();
                 tradePaymentFragment.setArguments(bundle);

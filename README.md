@@ -195,8 +195,8 @@ Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since 
 3. ~~Add 3 groups to the database~~
 4. ~~Configure login~~
 5. ~~Configure sign up~~
-6. Set up search functionality (API used)
-7. Set up trade payment functionality (user buys coin and result is sent to database)
+6. ~~Set up search functionality (API used)~~
+7. ~~Set up trade payment functionality (user buys coin and result is sent to database)~~
 8. ~~Configure group invest amount on overview page~~
 9. ~~Configure most recent trade on overview page~~
 10. ~~Configure user depositing feature~~
