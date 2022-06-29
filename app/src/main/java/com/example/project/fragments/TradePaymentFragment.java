@@ -321,7 +321,7 @@ public class TradePaymentFragment extends Fragment {
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
-                                Double tradeLot = buyAmount / ((Double) priceNumber);
+                                Double tradeLot = buyAmount / (Double.valueOf((Long) priceNumber));
                                 Timestamp tradeTimestamp = Timestamp.now();
 
                                 trade.put("direction", tradeDirection);
@@ -339,6 +339,7 @@ public class TradePaymentFragment extends Fragment {
                                 buyAmount = 0.00;
                                 setBuySellAmount(buyAmount);
                                 Toast.makeText(getActivity().getApplicationContext(), "Trade confirmed", Toast.LENGTH_SHORT).show();
+                                sendTradeToChat(trade, groupId);
                             } else {
                                 Log.d(TAG, "No such document");
                             }
@@ -394,6 +395,7 @@ public class TradePaymentFragment extends Fragment {
                                 buyAmount = 0.00;
                                 setBuySellAmount(buyAmount);
                                 Toast.makeText(getActivity().getApplicationContext(), "Trade confirmed", Toast.LENGTH_SHORT).show();
+                                sendTradeToChat(trade, groupId);
                             } else {
                                 Log.d(TAG, "No such document");
                             }
@@ -404,6 +406,41 @@ public class TradePaymentFragment extends Fragment {
                 });
             }
         }
+    }
+
+    private void sendTradeToChat(HashMap<String, Object> trade, String chatId) {
+        DocumentReference docRef = db.collection("chats").document(chatId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        ArrayList<Map<String, Object>> messages = (ArrayList<Map<String, Object>>) data.get("messages");
+
+                        HashMap<String, Object> message = new HashMap<String, Object>();
+                        message.put("direction", trade.get("direction"));
+                        message.put("lot", trade.get("lot"));
+                        message.put("price", trade.get("price"));
+                        message.put("ticker", trade.get("ticker"));
+                        message.put("time", trade.get("time"));
+                        message.put("user", userId);
+                        message.put("type", "trade");
+
+                        messages.add(message);
+                        Map<String, Object> updatedData = new HashMap<>();
+                        updatedData.put("messages", messages);
+                        db.collection("chats").document(chatId).set(updatedData, SetOptions.merge());
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     private void updateUserBuyBalance(Double buyAmount) {
@@ -470,7 +507,7 @@ public class TradePaymentFragment extends Fragment {
                         if (document.exists()) {
                             Map<String, Object> data = document.getData();
                             Log.d(TAG, "DocumentSnapshot data: " + data);
-                            assets = (Double) data.get("assets");
+                            assets = Double.valueOf((Double) data.get("assets"));
                             if (assets == 0.00) {
                                 currentAssets = "You have $0.00 available";
                                 tvCurrentAccountAssets.setText(currentAssets);

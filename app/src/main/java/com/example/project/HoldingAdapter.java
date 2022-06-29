@@ -111,7 +111,6 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
             itemView.setOnClickListener((View.OnClickListener) this);
         }
 
-        // holding field corresponds to the ticker of a coin (could be multiple trades with this ticker)
         public void bind(ArrayList<String> holding) {
             if (holding.get(0).equals("")) {
                 return;

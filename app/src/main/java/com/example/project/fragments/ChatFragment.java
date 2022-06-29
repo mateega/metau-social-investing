@@ -2,13 +2,37 @@ package com.example.project.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.project.ChatAdapter;
 import com.example.project.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,14 +41,25 @@ import com.example.project.R;
  */
 public class ChatFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "CHAT FRAGMENT";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    String groupId;
+    FirebaseFirestore db;
+    String userId;
+
+    TextView tvChat;
+    RecyclerView rvChat;
+    EditText etSendMessage;
+    ImageButton ibSend;
+
+    protected ArrayList<Map<String, Object>> messages;
+    protected ChatAdapter chatAdapter;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -62,5 +97,100 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chat, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        groupId = getActivity().getIntent().getStringExtra("groupName");
+        db = FirebaseFirestore.getInstance();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        tvChat = view.findViewById(R.id.tvChat);
+        rvChat = view.findViewById(R.id.rvChat);
+        etSendMessage = view.findViewById(R.id.etSendMessage);
+        ibSend = view.findViewById(R.id.ibSend);
+
+        tvChat.setText(groupId + " chat");
+
+        messages = new ArrayList<>();
+        chatAdapter = new ChatAdapter(getContext(), messages, groupId);
+        rvChat.setAdapter(chatAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvChat.setLayoutManager(linearLayoutManager);
+
+        if (groupId != null) {
+            DocumentReference docRef = db.collection("chats").document(groupId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + data);
+                            setMessages(data);
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
+
+        ibSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String body = etSendMessage.getText().toString();
+                if (TextUtils.isEmpty(body)) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Please enter a message", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                saveMessage(body);
+                etSendMessage.getText().clear();
+            }
+        });
+    }
+
+    private void setMessages(Map<String, Object> data) {
+        ArrayList<Map<String, Object>> messagesMap = (ArrayList) data.get("messages");
+        messages.addAll(messagesMap);
+        chatAdapter.notifyDataSetChanged();
+    }
+
+    private void saveMessage(String body) {
+        DocumentReference docRef = db.collection("chats").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        ArrayList<HashMap<String, Object>> messages = (ArrayList<HashMap<String, Object>>) data.get("messages");
+
+                        HashMap<String, Object> message = new HashMap<String, Object>();
+                        message.put("user", userId);
+                        message.put("body", body);
+                        Timestamp time = Timestamp.now();
+                        message.put("time", time);
+                        message.put("type", "message");
+
+                        messages.add(message);
+                        Map<String, Object> updatedData = new HashMap<>();
+                        updatedData.put("messages", messages);
+                        db.collection("chats").document(groupId).set(updatedData, SetOptions.merge());
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 }

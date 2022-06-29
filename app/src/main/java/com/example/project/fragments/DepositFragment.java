@@ -237,8 +237,10 @@ public class DepositFragment extends Fragment {
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
                         Log.d(TAG, "DocumentSnapshot data: " + data);
-
-                        Double assets = (Double) data.get("assets");
+                        Double assets = 0.00;
+                        if (data.containsKey("assets")) {
+                            assets = Double.valueOf((Double) data.get("assets"));
+                        }
                         assets = assets + depositAmount;
 
                         Map<String, Object> updatedData = new HashMap<>();
@@ -302,7 +304,10 @@ public class DepositFragment extends Fragment {
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
                         Log.d(TAG, "DocumentSnapshot data: " + data);
-                        Double assets = (Double) data.get("assets");
+                        Double assets = 0.00;
+                        if(data.containsKey("assets")) {
+                            assets = Double.valueOf((Double) data.get("assets"));
+                        }
                         if (assets == 0.00) {
                             currentAssets = "Current account assets: $0.00";
                             tvCurrentAccountAssets.setText(currentAssets);
