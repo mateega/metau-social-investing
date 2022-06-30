@@ -321,7 +321,7 @@ public class TradePaymentFragment extends Fragment {
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
-                                Double tradeLot = buyAmount / (Double.valueOf((Long) priceNumber));
+                                Double tradeLot = buyAmount / (Double.valueOf((priceNumber.toString())));
                                 Timestamp tradeTimestamp = Timestamp.now();
 
                                 trade.put("direction", tradeDirection);
@@ -377,7 +377,7 @@ public class TradePaymentFragment extends Fragment {
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
-                                Double tradeLot = buyAmount / ((Double) priceNumber);
+                                Double tradeLot = buyAmount / (Double.valueOf(priceNumber.toString()));
                                 Timestamp tradeTimestamp = Timestamp.now();
 
                                 trade.put("direction", tradeDirection);

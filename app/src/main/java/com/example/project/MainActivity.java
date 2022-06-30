@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.project.fragments.ChatFragment;
@@ -14,9 +15,17 @@ import com.example.project.fragments.OverviewFragment;
 import com.example.project.fragments.SettingsFragment;
 import com.example.project.fragments.TradeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MAIN ACTIVITY";
     private BottomNavigationView bottomNavigationView;
     final FragmentManager fragmentManager = getSupportFragmentManager();
     public String currentGroup;
@@ -58,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
         });
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.actionGroupOverview);
+
+        FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
+        firebaseMessaging.subscribeToTopic("notification_topic");
+        Log.i(TAG, "user joined notification topic");
     }
-
-
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "991275307893",
+    "firebase_url": "https://metau-social-investing-default-rtdb.firebaseio.com",
+    "project_id": "metau-social-investing",
+    "storage_bucket": "metau-social-investing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991275307893:android:634a7de7cc14ce1eaaf93c",
+        "android_client_info": {
+          "package_name": "com.metau.social_investing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "991275307893-d0niuqrukgslvp4maah48r61lojmtqpp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTl4AAo4aLBZxclW5iamx2w2vGzUtPK28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "991275307893-d0niuqrukgslvp4maah48r61lojmtqpp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
