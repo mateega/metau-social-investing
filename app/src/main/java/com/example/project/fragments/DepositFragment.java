@@ -239,7 +239,7 @@ public class DepositFragment extends Fragment {
                         Log.d(TAG, "DocumentSnapshot data: " + data);
                         Double assets = 0.00;
                         if (data.containsKey("assets")) {
-                            assets = Double.valueOf((Double) data.get("assets"));
+                            assets = Double.valueOf(data.get("assets").toString());
                         }
                         assets = assets + depositAmount;
 
@@ -306,7 +306,7 @@ public class DepositFragment extends Fragment {
                         Log.d(TAG, "DocumentSnapshot data: " + data);
                         Double assets = 0.00;
                         if(data.containsKey("assets")) {
-                            assets = Double.valueOf((Double) data.get("assets"));
+                            assets = Double.valueOf((data.get("assets").toString()));
                         }
                         if (assets == 0.00) {
                             currentAssets = "Current account assets: $0.00";

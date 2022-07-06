@@ -120,18 +120,19 @@
 
         </RelativeLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp">
+<!--        Chart commented out until implemented-->
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="200dp">-->
 
-            <WebView
-                android:id="@+id/wvChart"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp"
-                />
+<!--            <WebView-->
+<!--                android:id="@+id/wvChart"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginHorizontal="20dp"-->
+<!--                />-->
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 <!--        Data points below chart-->
 <!--        Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)-->

@@ -23,10 +23,14 @@ import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
@@ -50,6 +54,7 @@ public class ChatFragment extends Fragment {
     private String mParam2;
 
     String groupId;
+    String userName;
     FirebaseFirestore db;
     String userId;
 
@@ -60,6 +65,8 @@ public class ChatFragment extends Fragment {
 
     protected ArrayList<Map<String, Object>> messages;
     protected ChatAdapter chatAdapter;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -104,6 +111,7 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         groupId = getActivity().getIntent().getStringExtra("groupName");
+        userName = getActivity().getIntent().getStringExtra("userName");
         db = FirebaseFirestore.getInstance();
         userId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
@@ -153,12 +161,32 @@ public class ChatFragment extends Fragment {
                 etSendMessage.getText().clear();
             }
         });
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+
+        db.collection("chats").document(groupId)
+            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) {
+                        Log.w(TAG, "Listen error", error);
+                        return;
+                    }
+                    ArrayList<Map<String, Object>> newMessages = (ArrayList<Map<String, Object>>) value.getData().get("messages");
+                    Map<String, Object> newMessage = newMessages.get(newMessages.size()-1);
+
+                    messages.add(newMessage);
+                    chatAdapter.notifyDataSetChanged();
+                    rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                }
+            });
     }
 
     private void setMessages(Map<String, Object> data) {
         ArrayList<Map<String, Object>> messagesMap = (ArrayList) data.get("messages");
         messages.addAll(messagesMap);
         chatAdapter.notifyDataSetChanged();
+        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
     }
 
     private void saveMessage(String body) {
@@ -170,20 +198,24 @@ public class ChatFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
-                        ArrayList<HashMap<String, Object>> messages = (ArrayList<HashMap<String, Object>>) data.get("messages");
+                        ArrayList<HashMap<String, Object>> pastMessages = (ArrayList<HashMap<String, Object>>) data.get("messages");
 
                         HashMap<String, Object> message = new HashMap<String, Object>();
                         message.put("user", userId);
+                        message.put("name", userName);
                         message.put("body", body);
                         Timestamp time = Timestamp.now();
                         message.put("time", time);
                         message.put("type", "message");
 
-                        messages.add(message);
+                        pastMessages.add(message);
                         Map<String, Object> updatedData = new HashMap<>();
-                        updatedData.put("messages", messages);
+                        updatedData.put("messages", pastMessages);
                         db.collection("chats").document(groupId).set(updatedData, SetOptions.merge());
 
+                        messages.add(message);
+                        chatAdapter.notifyDataSetChanged();
+                        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                     } else {
                         Log.d(TAG, "No such document");
                     }

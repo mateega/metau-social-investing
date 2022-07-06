@@ -132,7 +132,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                                     tvTradeTime.setText(tradeDateFormat.format(tradeJavaDate));
 
                                     String direction = message.get("direction").toString();
-                                    Double lotDble = (Double) message.get("lot");
+                                    Double lotDble = Double.valueOf(message.get("lot").toString());
                                     String lotStr = String.valueOf(Math.floor(lotDble * 100000) / 100000);
                                     String ticker = message.get("ticker").toString();
 

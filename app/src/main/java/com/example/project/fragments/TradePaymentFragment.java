@@ -507,7 +507,7 @@ public class TradePaymentFragment extends Fragment {
                         if (document.exists()) {
                             Map<String, Object> data = document.getData();
                             Log.d(TAG, "DocumentSnapshot data: " + data);
-                            assets = Double.valueOf((Double) data.get("assets"));
+                            assets = Double.valueOf(data.get("assets").toString());
                             if (assets == 0.00) {
                                 currentAssets = "You have $0.00 available";
                                 tvCurrentAccountAssets.setText(currentAssets);
