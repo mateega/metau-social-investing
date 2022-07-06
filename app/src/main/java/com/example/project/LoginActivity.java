@@ -41,8 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
 
         btnLogin = findViewById(R.id.btnLogin);
-        btnFacebook = findViewById(R.id.btnFacebook);
-        btnGoogle = findViewById(R.id.btnGoogle);
+        //Social login commented out until implemented
+        //btnFacebook = findViewById(R.id.btnFacebook);
+        //btnGoogle = findViewById(R.id.btnGoogle);
         btnSignupText = findViewById(R.id.btnSignupText);
 
         btnSignupText.setOnClickListener(new View.OnClickListener() {

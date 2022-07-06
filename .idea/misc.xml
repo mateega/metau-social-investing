@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/custom_input.xml" value="0.226" />
+        <entry key="app/src/main/res/drawable/ic_baseline_add_chart_24.xml" value="0.21" />
         <entry key="app/src/main/res/drawable/layout_rounded.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/layout_rounded_2.xml" value="0.1955" />
         <entry key="app/src/main/res/drawable/layout_rounded_green.xml" value="0.1955" />
@@ -14,9 +15,9 @@
         <entry key="app/src/main/res/layout/activity_groups.xml" value="0.27089284261067714" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18246594857478482" />
-        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.2949874877929688" />
-        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.165" />
-        <entry key="app/src/main/res/layout/fragment_coin_details.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.3125106811523438" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.22762359619140626" />
+        <entry key="app/src/main/res/layout/fragment_coin_details.xml" value="0.29020385742187504" />
         <entry key="app/src/main/res/layout/fragment_deposit.xml" value="0.21923373038308663" />
         <entry key="app/src/main/res/layout/fragment_overview.xml" value="0.2786870320638021" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.21928202311197914" />
@@ -42,7 +43,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.2630208333333333" />
+        <option name="scale" value="0.165" />
       </ProjectState>
     </option>
   </component>

@@ -96,23 +96,6 @@
         tools:layout_editor_absoluteX="35dp"
         tools:layout_editor_absoluteY="313dp" />
 
-    <TextView
-        android:id="@+id/tvOrSignUpWith"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSignup"
-        android:layout_alignParentStart="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="154dp"
-        android:layout_marginTop="14dp"
-        android:text="Or Sign Up With"
-
-        android:fontFamily="@font/helveticaneue_medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="500dp" />
-
     <EditText
         android:id="@+id/etName"
         android:layout_width="354dp"
@@ -227,57 +210,74 @@
         tools:layout_editor_absoluteX="34dp"
         tools:layout_editor_absoluteY="423dp" />
 
-    <LinearLayout
-        android:id="@+id/layAuth"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvOrSignUpWith"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="0dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <!--    Social login commented out until implemented-->
+<!--    <TextView-->
+<!--        android:id="@+id/tvOrSignUpWith"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/btnSignup"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginStart="154dp"-->
+<!--        android:layout_marginTop="14dp"-->
+<!--        android:fontFamily="@font/helveticaneue_medium"-->
+<!--        android:text="Or Sign Up With"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.498"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        tools:layout_editor_absoluteY="500dp" />-->
 
-        <Button
-            android:id="@+id/btnFacebook"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvOrSignUpWith"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="10dp"
-            android:fontFamily="@font/britanica_extrabold"
-            android:stateListAnimator="@null"
-            android:text="Facebook"
-            android:textAllCaps="false"
-            android:textSize="14dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.076"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="575dp" />
+<!--    <LinearLayout-->
+<!--        android:id="@+id/layAuth"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/tvOrSignUpWith"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginStart="0dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginEnd="0dp"-->
+<!--        android:gravity="center"-->
+<!--        android:orientation="horizontal">-->
 
-        <Button
-            android:id="@+id/btnGoogle"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvOrSignUpWith"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="10dp"
-            android:fontFamily="@font/britanica_extrabold"
-            android:stateListAnimator="@null"
-            android:text="Google"
-            android:textAllCaps="false"
-            android:textSize="14dp"
+<!--        <Button-->
+<!--            android:id="@+id/btnFacebook"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@+id/tvOrSignUpWith"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            android:fontFamily="@font/britanica_extrabold"-->
+<!--            android:stateListAnimator="@null"-->
+<!--            android:text="Facebook"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textSize="14dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.076"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            tools:layout_editor_absoluteY="575dp" />-->
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.85"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="575dp" />
+<!--        <Button-->
+<!--            android:id="@+id/btnGoogle"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@+id/tvOrSignUpWith"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            android:fontFamily="@font/britanica_extrabold"-->
+<!--            android:stateListAnimator="@null"-->
+<!--            android:text="Google"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textSize="14dp"-->
 
-    </LinearLayout>
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.85"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            tools:layout_editor_absoluteY="575dp" />-->
+
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/layAlreadyHaveAccount"

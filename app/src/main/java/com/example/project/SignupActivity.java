@@ -38,8 +38,9 @@ public class SignupActivity extends AppCompatActivity {
     EditText etPassword;
 
     Button btnSignup;
-    Button btnFacebook;
-    Button btnGoogle;
+    //Social login commented out until implemented
+    //Button btnFacebook;
+    //Button btnGoogle;
     Button btnLoginText;
 
     private FirebaseAuth mAuth;
@@ -58,8 +59,8 @@ public class SignupActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
 
         btnSignup = findViewById(R.id.btnSignup);
-        btnFacebook = findViewById(R.id.btnFacebook);
-        btnGoogle = findViewById(R.id.btnGoogle);
+//        btnFacebook = findViewById(R.id.btnFacebook);
+//        btnGoogle = findViewById(R.id.btnGoogle);
         btnLoginText = findViewById(R.id.btnLoginText);
 
         btnLoginText.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +126,8 @@ public class SignupActivity extends AppCompatActivity {
         user.put("email", email);
         user.put("password", password);
         user.put("assets", 0);
+        String defaultProfilePic = "https://www.theparentingplace.net/wp-content/uploads/2021/02/BlankImage.jpg";
+        user.put("profilePicture", defaultProfilePic);
 
         db.collection("users").document(email)
                 .set(user)
@@ -151,6 +154,5 @@ public class SignupActivity extends AppCompatActivity {
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
     }
-
 
 }
