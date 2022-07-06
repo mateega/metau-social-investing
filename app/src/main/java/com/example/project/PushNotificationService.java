@@ -6,7 +6,7 @@ import android.app.NotificationManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
-
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -17,18 +17,23 @@ public class PushNotificationService extends FirebaseMessagingService {
         super.onMessageReceived(message);
         String title =  message.getNotification().getTitle();
         String body =  message.getNotification().getBody();
+        String userId = message.getData().get("user");
+
         final String CHANNEL_ID = "NOTIFICATIONS";
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "MyNotification", NotificationManager.IMPORTANCE_HIGH);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
-        // create the notification object
-        Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setSmallIcon(R.drawable.ic_baseline_add_chart_24)
-                .setAutoCancel(true);
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-        // send the notification through the channel to be displayed
-        NotificationManagerCompat.from(this).notify(1, notification.build());
+        if (!userId.equals(currentUserId)) {
+            // create the notification object
+            Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setSmallIcon(R.drawable.logo)
+                    .setAutoCancel(true);
+            // send the notification through the channel to be displayed
+            NotificationManagerCompat.from(this).notify(1, notification.build());
+        }
     }
 }

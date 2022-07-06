@@ -46,6 +46,7 @@ public class GroupsActivity extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseUser user;
     String userId;
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,26 @@ public class GroupsActivity extends AppCompatActivity {
                 String group = GROUP_3_ID;
                 addUserToGroup(group);
                 goToGroup(group);
+            }
+        });
+
+        DocumentReference docRef = db.collection("users").document(user.getEmail());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+
+                        userName = data.get("name").toString();
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
             }
         });
     }
@@ -193,6 +214,7 @@ public class GroupsActivity extends AppCompatActivity {
     private void goToGroup(String groupName) {
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("groupName", groupName);
+        i.putExtra("userName", userName);
         startActivity(i);
     }
 

@@ -159,7 +159,7 @@ public class CoinDetailsFragment extends Fragment {
         tvPriceChange = view.findViewById(R.id.tvPriceChange);
         ivCoinImage = view.findViewById(R.id.ivCoinImage);
         //tvChart = view.findViewById(R.id.tvChart);
-        wbChart = view.findViewById(R.id.wvChart);
+        //wbChart = view.findViewById(R.id.wvChart);
         btnSell = view.findViewById(R.id.btnSell);
         btnBuy = view.findViewById(R.id.btnBuy);
 
@@ -196,32 +196,30 @@ public class CoinDetailsFragment extends Fragment {
         });
 
         // TRADINGVIEW CHART LOADED WITH DUMMY DATA (AAPL STOCK)
-        String chartStr = "<!-- TradingView Widget BEGIN -->\n" +
-                "<div class=\"tradingview-widget-container\">\n" +
-                "  <div id=\"tradingview_398d5\"></div>\n" +
-                "  <div class=\"tradingview-widget-copyright\"><a href=\"https://www.tradingview.com/symbols/NASDAQ-AAPL/\" rel=\"noopener\" target=\"_blank\"><span class=\"blue-text\">AAPL Chart</span></a> by TradingView</div>\n" +
-                "  <script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>\n" +
-                "  <script type=\"text/javascript\">\n" +
-                "  new TradingView.widget(\n" +
-                "  {\n" +
-                "  \"autosize\": true,\n" +
-                "  \"symbol\": \"NASDAQ:AAPL\",\n" +
-                "  \"interval\": \"D\",\n" +
-                "  \"timezone\": \"Etc/UTC\",\n" +
-                "  \"theme\": \"light\",\n" +
-                "  \"style\": \"1\",\n" +
-                "  \"locale\": \"en\",\n" +
-                "  \"toolbar_bg\": \"#f1f3f6\",\n" +
-                "  \"enable_publishing\": false,\n" +
-                "  \"allow_symbol_change\": true,\n" +
-                "  \"container_id\": \"tradingview_398d5\"\n" +
-                "}\n" +
-                "  );\n" +
-                "  </script>\n" +
-                "</div>\n" +
-                "<!-- TradingView Widget END -->";
-
-        wbChart.loadData(chartStr, "text/html; charset=UTF-8", null);
+//        String chartStr = "<!-- TradingView Widget BEGIN -->\n" +
+//                "<div class=\"tradingview-widget-container\">\n" +
+//                "  <div id=\"tradingview_398d5\"></div>\n" +
+//                "  <div class=\"tradingview-widget-copyright\"><a href=\"https://www.tradingview.com/symbols/NASDAQ-AAPL/\" rel=\"noopener\" target=\"_blank\"><span class=\"blue-text\">AAPL Chart</span></a> by TradingView</div>\n" +
+//                "  <script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>\n" +
+//                "  <script type=\"text/javascript\">\n" +
+//                "  new TradingView.widget(\n" +
+//                "  {\n" +
+//                "  \"autosize\": true,\n" +
+//                "  \"symbol\": \"NASDAQ:AAPL\",\n" +
+//                "  \"interval\": \"D\",\n" +
+//                "  \"timezone\": \"Etc/UTC\",\n" +
+//                "  \"theme\": \"light\",\n" +
+//                "  \"style\": \"1\",\n" +
+//                "  \"locale\": \"en\",\n" +
+//                "  \"toolbar_bg\": \"#f1f3f6\",\n" +
+//                "  \"enable_publishing\": false,\n" +
+//                "  \"allow_symbol_change\": true,\n" +
+//                "  \"container_id\": \"tradingview_398d5\"\n" +
+//                "}\n" +
+//                "  );\n" +
+//                "  </script>\n" +
+//                "</div>\n" +
+//                "<!-- TradingView Widget END -->";
 
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override
