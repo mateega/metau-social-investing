@@ -427,6 +427,7 @@ public class TradePaymentFragment extends Fragment {
                         message.put("time", trade.get("time"));
                         message.put("user", userId);
                         message.put("type", "trade");
+                        message.put("groupId", chatId);
 
                         messages.add(message);
                         Map<String, Object> updatedData = new HashMap<>();

@@ -15,13 +15,7 @@ import com.example.project.fragments.OverviewFragment;
 import com.example.project.fragments.SettingsFragment;
 import com.example.project.fragments.TradeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,5 +65,22 @@ public class MainActivity extends AppCompatActivity {
         FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
         firebaseMessaging.subscribeToTopic("notification_topic");
         Log.i(TAG, "user joined notification topic");
+
+        String deepLink = getIntent().getStringExtra("deepLink");
+        if (deepLink !=null) {
+            Fragment fragment;
+            switch (deepLink) {
+                case "www.metau.page.link/chat":
+                    fragment = new ChatFragment();
+                    break;
+                case "www.metau.page.link/overview":
+                    fragment = new OverviewFragment();
+                    break;
+                default:
+                    fragment = new OverviewFragment();
+                    break;
+            }
+            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+        }
     }
 }

@@ -17,6 +17,7 @@ exports.firestoreNotifications = functions.firestore
         const type = recentMessage["type"];
         const user = recentMessage["user"];
         const name = recentMessage["name"];
+        const groupId = recentMessage["groupId"];
 
         if (type == "message") {
             const body = recentMessage["body"];
@@ -25,12 +26,12 @@ exports.firestoreNotifications = functions.firestore
             admin.messaging().sendToTopic(
                 "notification_topic",
                 {
-                    notification: {
-                        title:  name,
-                        body: body
-                    },
                     data: {
-                         "user": user
+                         "title":  name,
+                         "body": body,
+                         "user": user,
+                         "deepLink": "www.metau.page.link/chat",
+                         "groupId": groupId
                     }
                 }
             );
@@ -50,12 +51,12 @@ exports.firestoreNotifications = functions.firestore
             admin.messaging().sendToTopic(
                 "notification_topic",
                 {
-                    notification: {
-                        title:  ticker + " " + direction,
-                        body: lotRounded + " " + ticker + " @ " + formatter.format(price)
-                    },
                     data: {
-                        "user": user
+                        "title":  ticker + " " + direction,
+                        "body": lotRounded + " " + ticker + " @ " + formatter.format(price),
+                        "user": user,
+                        "deepLink": "www.metau.page.link/overview",
+                        "groupId": groupId
                     }
                 }
             );

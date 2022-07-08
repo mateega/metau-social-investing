@@ -31,7 +31,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"/>
+        android:layout_marginBottom="0dp" />
 
     <LinearLayout
         android:id="@+id/laySendMessage"

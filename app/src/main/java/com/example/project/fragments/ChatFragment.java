@@ -112,8 +112,12 @@ public class ChatFragment extends Fragment {
 
         groupId = getActivity().getIntent().getStringExtra("groupName");
         userName = getActivity().getIntent().getStringExtra("userName");
-        db = FirebaseFirestore.getInstance();
         userId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if (userName == null) {
+            getUserName(userId);
+        }
+        db = FirebaseFirestore.getInstance();
+
 
         tvChat = view.findViewById(R.id.tvChat);
         rvChat = view.findViewById(R.id.rvChat);
@@ -182,6 +186,26 @@ public class ChatFragment extends Fragment {
             });
     }
 
+    private void getUserName(String userId) {
+        DocumentReference docRef = db.collection("users").document(userId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        userName = data.get("name").toString();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
     private void setMessages(Map<String, Object> data) {
         ArrayList<Map<String, Object>> messagesMap = (ArrayList) data.get("messages");
         messages.addAll(messagesMap);
@@ -207,13 +231,13 @@ public class ChatFragment extends Fragment {
                         Timestamp time = Timestamp.now();
                         message.put("time", time);
                         message.put("type", "message");
+                        message.put("groupId", groupId);
 
                         pastMessages.add(message);
                         Map<String, Object> updatedData = new HashMap<>();
                         updatedData.put("messages", pastMessages);
                         db.collection("chats").document(groupId).set(updatedData, SetOptions.merge());
 
-                        messages.add(message);
                         chatAdapter.notifyDataSetChanged();
                         rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                     } else {
