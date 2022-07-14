@@ -37,7 +37,7 @@
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/cvProfileImage"
         android:fontFamily="@font/helveticaneue_medium"
-        android:text="TextView"
+        android:text=""
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -52,7 +52,7 @@
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/tvName"
         android:fontFamily="@font/helveticaneuemed"
-        android:text="TextView"
+        android:text=""
         android:textColor="@color/dark_grey"
         android:textSize="12sp"
         tools:text="4:48 PM" />
@@ -96,7 +96,7 @@
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/tvTradeExecuted"
         android:fontFamily="@font/helveticaneuemed"
-        android:text="TextView"
+        android:text=""
         android:textColor="@color/dark_grey"
         android:textSize="12sp"
         tools:text="4:48 PM" />
@@ -126,7 +126,6 @@
         android:textColor="@color/dark_grey"
         android:textSize="12sp"
         tools:text="Trade by @spencer_mateega" />
-
 
 </RelativeLayout>
 

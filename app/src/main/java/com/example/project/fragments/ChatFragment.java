@@ -156,38 +156,30 @@ public class ChatFragment extends Fragment {
                     ArrayList<Map<String, Object>> newMessages = (ArrayList<Map<String, Object>>) value.getData().get("messages");
                     Map<String, Object> newMessage = newMessages.get(newMessages.size()-1);
 
-                    messages.add(newMessage);
-                    chatAdapter.notifyDataSetChanged();
-                    rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                    // work around to fix duplicate trade messages in chat
+                    // if new message is a trade
+                    if (newMessage.get("type").toString().equals("trade")) {
+                        ArrayList<Map<String, Object>> messages = ((MainActivity)getActivity()).getMessages();
+                        if (messages.size() != 0) {
+                            String newLot = newMessage.get("lot").toString();
+                            Map<String, Object> pastMessage = messages.get(messages.size()-1);
+                            // if past message is a trade
+                            if (pastMessage.get("type").toString().equals("trade")) {
+                                String pastLot = messages.get(messages.size()-1).get("lot").toString();
+                                if (!newLot.equals(pastLot)) {
+                                    messages.add(newMessage);
+                                    chatAdapter.notifyDataSetChanged();
+                                    rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                                }
+                            }
+                        } else {
+                            messages.add(newMessage);
+                            chatAdapter.notifyDataSetChanged();
+                            rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                        }
+                    }
                 }
             });
-    }
-
-    private void getUserName(String userId) {
-        DocumentReference docRef = db.collection("users").document(userId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Map<String, Object> data = document.getData();
-                        userName = data.get("name").toString();
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    private void setMessages(Map<String, Object> data) {
-        ArrayList<Map<String, Object>> messagesMap = (ArrayList) data.get("messages");
-        messages.addAll(messagesMap);
-        chatAdapter.notifyDataSetChanged();
-        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
     }
 
     private void saveMessage(String body) {

@@ -39,7 +39,7 @@
         android:layout_marginBottom="23dp"
         android:layout_toEndOf="@+id/cvProfileImage"
         android:fontFamily="@font/helveticaneue_medium"
-        android:text="TextView"
+        android:text=""
         android:textColor="@color/black"
         android:textSize="12sp"
         tools:text="Spencer Mateega" />
