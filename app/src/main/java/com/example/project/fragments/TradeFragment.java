@@ -240,8 +240,6 @@ public class TradeFragment extends Fragment {
             }
         });
 
-
-
     }
 
     private void toggleCoinViews(boolean searching) {
@@ -262,7 +260,7 @@ public class TradeFragment extends Fragment {
         Request request = new Request.Builder()
                 .url("https://rest.coinapi.io/v1/assets?filter_asset_id=" + searchText)
                 .get()
-                .addHeader(BuildConfig.COINAPI_AUTH_HEADER, BuildConfig.COINAPI_KEY_2)
+                .addHeader(BuildConfig.COINAPI_AUTH_HEADER, BuildConfig.COINAPI_KEY_1)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -273,6 +271,7 @@ public class TradeFragment extends Fragment {
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Log.i(TAG, "CALLED COINAPI API");
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                     String jsonData = responseBody.string();
@@ -324,6 +323,7 @@ public class TradeFragment extends Fragment {
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Log.i(TAG, "CALLED COINMARKETCAP API");
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                     String jsonData = responseBody.string();
@@ -441,6 +441,7 @@ public class TradeFragment extends Fragment {
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Log.i(TAG, "CALLED COINMARKETCAP API");
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                     String jsonData = responseBody.string();

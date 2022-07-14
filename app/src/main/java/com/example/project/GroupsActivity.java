@@ -80,8 +80,11 @@ public class GroupsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String group = GROUP_1_ID;
-                addUserToGroup(group);
-                goToGroup(group);
+                String groupName = GROUP_1_NAME;
+                if (!(Boolean)map.get(group).get("inGroup")){
+                    addUserToGroup(group);
+                }
+                pullGroupData(group, groupName);
             }
         });
         layGroup2.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +130,11 @@ public class GroupsActivity extends AppCompatActivity {
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
@@ -180,6 +188,11 @@ public class GroupsActivity extends AppCompatActivity {
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {

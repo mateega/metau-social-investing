@@ -163,6 +163,7 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Log.i(TAG, "CALLED COINMARKETCAP API");
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                     String jsonData = responseBody.string();
@@ -208,6 +209,7 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Log.i(TAG, "CALLED COINMARKETCAP API");
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                     String jsonData = responseBody.string();
@@ -283,6 +285,7 @@ public class HoldingAdapter extends RecyclerView.Adapter<HoldingAdapter.ViewHold
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Log.i(TAG, "CALLED COINMARKETCAP API");
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                     String jsonData = responseBody.string();

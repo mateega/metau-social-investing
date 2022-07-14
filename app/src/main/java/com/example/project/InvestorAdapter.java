@@ -82,6 +82,11 @@ public class InvestorAdapter extends RecyclerView.Adapter<InvestorAdapter.ViewHo
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.getResult().getMetadata().isFromCache()) {
+                        Log.i(TAG, "CALLED DATA FROM CACHE");
+                    } else {
+                        Log.i(TAG, "CALLED FIREBASE DATABASE -- USERS");
+                    }
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
