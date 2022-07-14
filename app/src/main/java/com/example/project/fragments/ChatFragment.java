@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project.ChatAdapter;
+import com.example.project.MainActivity;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,6 +55,7 @@ public class ChatFragment extends Fragment {
     private String mParam2;
 
     String groupId;
+    String groupName;
     String userName;
     FirebaseFirestore db;
     String userId;
@@ -63,7 +65,6 @@ public class ChatFragment extends Fragment {
     EditText etSendMessage;
     ImageButton ibSend;
 
-    protected ArrayList<Map<String, Object>> messages;
     protected ChatAdapter chatAdapter;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -110,46 +111,24 @@ public class ChatFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        groupId = getActivity().getIntent().getStringExtra("groupName");
+        groupId = getActivity().getIntent().getStringExtra("groupId");
+        groupName = getActivity().getIntent().getStringExtra("groupName");
         userName = getActivity().getIntent().getStringExtra("userName");
         userId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        if (userName == null) {
-            getUserName(userId);
-        }
+
         db = FirebaseFirestore.getInstance();
 
         tvChat = view.findViewById(R.id.tvChat);
         etSendMessage = view.findViewById(R.id.etSendMessage);
         ibSend = view.findViewById(R.id.ibSend);
+        tvChat.setText(groupName + " chat");
 
-        tvChat.setText(groupId + " chat");
-
-        messages = new ArrayList<>();
-        chatAdapter = new ChatAdapter(getContext(), messages, groupId);
+        rvChat = view.findViewById(R.id.rvChat);
+        chatAdapter = ((MainActivity)getActivity()).getChatAdapter();
         rvChat.setAdapter(chatAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChat.setLayoutManager(linearLayoutManager);
-
-        if (groupId != null) {
-            DocumentReference docRef = db.collection("chats").document(groupId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
-                            setMessages(data);
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-        }
+        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
 
         ibSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,6 +203,7 @@ public class ChatFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        ArrayList<Map<String, Object>> messages = ((MainActivity)getActivity()).getMessages();
                         Map<String, Object> data = document.getData();
                         ArrayList<HashMap<String, Object>> pastMessages = (ArrayList<HashMap<String, Object>>) data.get("messages");
 
@@ -241,6 +221,7 @@ public class ChatFragment extends Fragment {
                         updatedData.put("messages", pastMessages);
                         db.collection("chats").document(groupId).set(updatedData, SetOptions.merge());
 
+                        messages.add(message);
                         chatAdapter.notifyDataSetChanged();
                         rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                     } else {

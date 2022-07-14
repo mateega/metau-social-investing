@@ -50,6 +50,7 @@ public class TradePaymentFragment extends Fragment {
     private static final String TAG = "TRADE PAYMENT FRAGMENT";
     private FirebaseFirestore db;
     String userId;
+    String groupId;
 
     String name;
     String ticker;
@@ -289,6 +290,7 @@ public class TradePaymentFragment extends Fragment {
             }
         });
 
+        groupId = getActivity().getIntent().getStringExtra("groupId");
     }
 
     private void trade() {
@@ -298,7 +300,6 @@ public class TradePaymentFragment extends Fragment {
             if (buyAmount > assets) {
                 Toast.makeText(getActivity().getApplicationContext(), "Account has insufficient funds", Toast.LENGTH_SHORT).show();
             } else {
-                String groupId = getActivity().getIntent().getStringExtra("groupName");
                 DocumentReference docRef = db.collection("groups").document(groupId);
                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -359,7 +360,6 @@ public class TradePaymentFragment extends Fragment {
             if (buyAmount > sellAssets) {
                 Toast.makeText(getActivity().getApplicationContext(), "Account has insufficient holdings", Toast.LENGTH_SHORT).show();
             } else {
-                String groupId = getActivity().getIntent().getStringExtra("groupName");
                 DocumentReference docRef = db.collection("groups").document(groupId);
                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -557,8 +557,6 @@ public class TradePaymentFragment extends Fragment {
 
     private void getSellAssets() {
         final Double[] holdingInUSD = {0.00};
-
-        String groupId = getActivity().getIntent().getStringExtra("groupName");
         DocumentReference docRef = db.collection("groups").document(groupId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

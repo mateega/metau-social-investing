@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.project.HoldingAdapter;
+import com.example.project.MainActivity;
 import com.example.project.MemberAdapter;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,8 +56,11 @@ public class OverviewFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "OVERVIEW FRAGMENT";
 
-    private String userName = "";
+    private String groupId = "";
     private String groupName = "";
+    private String userId = "";
+    private String userName = "";
+
     private String memberCount;
     private String groupAssetCount;
     private String personalAssetsCount;
@@ -71,8 +75,8 @@ public class OverviewFragment extends Fragment {
     TextView tvRecentTradeDate;
 
     private RecyclerView rvHoldings;
-    protected List<ArrayList<String>> holdings;
     protected HoldingAdapter holdingAdapter;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -127,174 +131,32 @@ public class OverviewFragment extends Fragment {
         tvPersonalAssetsCount = view.findViewById(R.id.tvPersonalAssetsCount);
         tvRecentTradeDate = view.findViewById(R.id.tvRecentTradeDate);
 
-        tvHello.setText("Hello");
-        tvWelcomeBack.setText("Welcome Back!");
+        groupId = getActivity().getIntent().getStringExtra("groupId");
+        groupName = getActivity().getIntent().getStringExtra("groupName");
+        userId = getActivity().getIntent().getStringExtra("userId");
+        userName = getActivity().getIntent().getStringExtra("userName");
+
+        tvHello.setText("Hello, " + userName);
+        tvWelcomeBack.setText("Welcome Back to " + groupName + "!");
 
         db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            DocumentReference docRef = db.collection("users").document(user.getEmail());
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
-
-                            setUsername(data);
-                            setPersonalAssets(data);
-
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-        }
-
-        String groupId = getActivity().getIntent().getStringExtra("groupName");
 
         rvHoldings = view.findViewById(R.id.rvHoldings);
-        holdings = new ArrayList<>();
-        holdingAdapter = new HoldingAdapter(getContext(), holdings, groupId);
+        holdingAdapter = ((MainActivity)getActivity()).getHoldingAdapter();
         rvHoldings.setAdapter(holdingAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvHoldings.setLayoutManager(linearLayoutManager);
 
-        if (groupId != null) {
-            DocumentReference docRef = db.collection("groups").document(groupId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
+        HashMap<String, String> groupData = new HashMap<>();
+        groupData.putAll(((MainActivity)getActivity()).getGroupData());
 
-                            setGroupName(data);
-                            setMemberCount(data);
-                            setGroupAssets(data);
-                            setRecentTrade(data);
-                            setHoldings(data);
+        tvMembersCount.setText(groupData.get("memberCount"));
+        tvGroupAssetsCount.setText(groupData.get("groupAssets"));
+        tvPersonalAssetsCount.setText(groupData.get("personalAssets"));
+        tvRecentTradeDate.setText(groupData.get("recentTrade"));
 
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-        }
-    }
 
-    private void setHoldings(Map<String, Object> data) {
-        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
-        HashMap<String, ArrayList<String>> tradesMap = new HashMap<String, ArrayList<String>>();
-        // trade array list format: [ticker, qnt. in crypto, qnt. in USD]
-
-        for (int i = 0; i < trades.size(); i++) {
-            Map<String, Object> trade = trades.get(i);
-            String tradeDirection = trade.get("direction").toString();
-            Double tradeLot = Double.valueOf(trade.get("lot").toString());
-            Double tradePrice = Double.valueOf(trade.get("price").toString());
-            String tradeTicker = trade.get("ticker").toString();
-
-            if (tradesMap.containsKey(tradeTicker)) {
-                ArrayList<String> oldTrade = tradesMap.get(tradeTicker);
-                String oldLot = oldTrade.get(1);
-                String oldSizeUSD = oldTrade.get(2);
-
-                String newTradeLot;
-                String newTradeSizeUSD;
-                ArrayList<String> tradeList = new ArrayList<String>();
-                if (tradeDirection.equals("buy")) {
-                    newTradeLot = String.valueOf(Double.parseDouble(oldLot) + tradeLot);
-                    newTradeSizeUSD = String.valueOf(Double.parseDouble(oldSizeUSD) + (tradeLot * tradePrice));
-                } else {
-                    newTradeLot = String.valueOf(Double.parseDouble(oldLot) - tradeLot);
-                    newTradeSizeUSD = String.valueOf(Double.parseDouble(oldSizeUSD) - (tradeLot * tradePrice));
-                }
-
-                tradeList.add(tradeTicker);
-                tradeList.add(newTradeLot);
-                tradeList.add(newTradeSizeUSD);
-                tradesMap.replace(tradeTicker, tradeList);
-
-            } else {
-                if (tradeDirection.equals("buy")) {
-                    ArrayList<String> tradeList = new ArrayList<String>();
-                    String tradeSizeUSD = String.valueOf(tradeLot * tradePrice);
-                    tradeList.add(tradeTicker);
-                    tradeList.add(String.valueOf(tradeLot));
-                    tradeList.add(tradeSizeUSD);
-                    tradesMap.put(tradeTicker, tradeList);
-                }
-                // I don't believe an else statement is needed here since a group must buy an asset
-                // before they sell it. This buy will come earlier in the trade list
-            }
-        }
-        holdings.addAll(tradesMap.values());
-        holdingAdapter.notifyDataSetChanged();
-
-    }
-
-    private void setGroupName(Map<String, Object> data) {
-        groupName = data.get("name").toString();
-        tvWelcomeBack.setText("Welcome Back to " + groupName + "!");
-    }
-
-    private void setRecentTrade(Map<String, Object> data) {
-        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
-        int numTrades = trades.size();
-        Map<String, Object> trade = trades.get(numTrades - 1);
-        Timestamp time = (Timestamp) trade.get("time");
-        Date javaDate = time.toDate();
-        DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-        recentTradeDate = dateFormat.format(javaDate);
-        tvRecentTradeDate.setText(recentTradeDate);
-    }
-
-    private void setGroupAssets(Map<String, Object> data) {
-        Long groupAssets = (Long) data.get("assets");
-        groupAssetCount = String.valueOf(groupAssets);
-        double amount = Double.parseDouble(groupAssetCount);
-        DecimalFormat formatter = new DecimalFormat("#,###.00");
-        groupAssetCount = "$" + formatter.format(amount);
-        tvGroupAssetsCount.setText(groupAssetCount);
-    }
-
-    private void setMemberCount(Map<String, Object> data) {
-        ArrayList<Reference> list = (ArrayList) data.get("members");
-        int groupSize = list.size();
-        memberCount = String.valueOf(groupSize);
-        tvMembersCount.setText(memberCount);
-    }
-
-    private void setUsername(Map<String, Object> data) {
-        userName = data.get("name").toString();
-        tvHello.setText("Hello, " + userName);
-    }
-
-    private void setPersonalAssets(Map<String, Object> data) {
-        personalAssetsCount = "0";
-        if (data.containsKey("assets")) {
-            personalAssetsCount = String.valueOf(data.get("assets"));
-        }
-        if (personalAssetsCount.equals("0")) {
-            personalAssetsCount = "$0.00";
-            tvPersonalAssetsCount.setText(personalAssetsCount);
-        } else {
-            double amount = Double.parseDouble(personalAssetsCount);
-            DecimalFormat formatter = new DecimalFormat("#,###.00");
-            personalAssetsCount = "$" + formatter.format(amount);
-            tvPersonalAssetsCount.setText(personalAssetsCount);
-        }
     }
 
 }

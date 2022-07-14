@@ -35,8 +35,10 @@ import com.example.project.CoinsAdapter;
 import com.example.project.MainActivity;
 import com.example.project.R;
 import com.google.common.net.HttpHeaders;
+import com.google.firebase.database.core.Context;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.HttpUrl;
@@ -50,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URISyntaxException;

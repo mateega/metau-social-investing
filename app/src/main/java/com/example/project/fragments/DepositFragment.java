@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.project.MainActivity;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -118,7 +119,13 @@ public class DepositFragment extends Fragment {
         currentAssets = "";
 
         tvCurrentAccountAssets = view.findViewById(R.id.tvCurrentAccountAssets);
-        getCurrentAssets();
+
+        HashMap<String, String> groupData = new HashMap<>();
+        groupData.putAll(((MainActivity) getActivity()).getGroupData());
+        String personalAssets = groupData.get("personalAssets");
+        if (personalAssets != null) {
+            tvCurrentAccountAssets.setText("Current account assets: " + groupData.get("personalAssets"));
+        }
 
         tvDepositAmount = view.findViewById(R.id.tvDepositAmount);
         tvDepositAmount.setText(depositAmountStr);
@@ -257,6 +264,9 @@ public class DepositFragment extends Fragment {
 
                         DecimalFormat formatter = new DecimalFormat("#,###.00");
                         currentAssets = "Current account assets: $" + formatter.format(assets);
+                        if (assets != null) {
+                            ((MainActivity) getActivity()).setPersonalAssets("$" + formatter.format(assets));
+                        }
                         tvCurrentAccountAssets.setText(currentAssets);
                     } else {
                         Log.d(TAG, "No such document");
@@ -299,41 +309,4 @@ public class DepositFragment extends Fragment {
         tvDepositAmount.setText(depositAmountStr);
     }
 
-    private void getCurrentAssets(){
-        DocumentReference docRef = db.collection("users").document(userId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.getResult().getMetadata().isFromCache()) {
-                    Log.i(TAG, "CALLED DATA FROM CACHE");
-                } else {
-                    Log.i(TAG, "CALLED FIREBASE DATABASE -- USERS");
-                }
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Map<String, Object> data = document.getData();
-                        Log.d(TAG, "DocumentSnapshot data: " + data);
-                        Double assets = 0.00;
-                        if(data.containsKey("assets")) {
-                            assets = Double.valueOf((data.get("assets").toString()));
-                        }
-                        if (assets == 0.00) {
-                            currentAssets = "Current account assets: $0.00";
-                            tvCurrentAccountAssets.setText(currentAssets);
-                        } else {
-                            DecimalFormat formatter = new DecimalFormat("#,###.00");
-                            currentAssets = "Current account assets: $" + formatter.format(assets);
-                            tvCurrentAccountAssets.setText(currentAssets);
-                        }
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
 }

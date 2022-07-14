@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import com.example.project.GroupsActivity;
 import com.example.project.InvestorAdapter;
 import com.example.project.LoginActivity;
+import com.example.project.MainActivity;
 import com.example.project.MemberAdapter;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,9 +27,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.SetOptions;
 
 import java.lang.reflect.Array;
@@ -52,12 +59,15 @@ public class SettingsFragment extends Fragment {
     private Button btnLeaveGroup;
     private Button btnSignout;
     private FirebaseFirestore db;
+    String groupId;
+
     private RecyclerView rvInvestors;
+    protected InvestorAdapter investorAdapter;
+    LinearLayoutManager investorLinearLayoutManager;
+
     private RecyclerView rvMembers;
     protected MemberAdapter memberAdapter;
-    protected InvestorAdapter investorAdapter;
-    protected List<String> members;
-    protected List<String> investors;
+    LinearLayoutManager memberLinearLayoutManager;
 
 
     // TODO: Rename and change types of parameters
@@ -125,65 +135,22 @@ public class SettingsFragment extends Fragment {
         });
 
         rvMembers = view.findViewById(R.id.rvMembers);
-        rvInvestors = view.findViewById(R.id.rvInvestors);
-        members = new ArrayList<>();
-        investors = new ArrayList<>();
-        memberAdapter = new MemberAdapter(getContext(), members);
-        investorAdapter = new InvestorAdapter(getContext(), investors);
+        memberAdapter = ((MainActivity)getActivity()).getMemberAdapter();
         rvMembers.setAdapter(memberAdapter);
-        rvInvestors.setAdapter(investorAdapter);
-        LinearLayoutManager memberLinearLayoutManager = new LinearLayoutManager(getContext());
-        LinearLayoutManager investorLinearLayoutManager = new LinearLayoutManager(getContext());
+        memberLinearLayoutManager = new LinearLayoutManager(getContext());
         rvMembers.setLayoutManager(memberLinearLayoutManager);
+
+        rvInvestors = view.findViewById(R.id.rvInvestors);
+        investorAdapter = ((MainActivity)getActivity()).getInvestorAdapter();
+        rvInvestors.setAdapter(investorAdapter);
+        investorLinearLayoutManager = new LinearLayoutManager(getContext());
         rvInvestors.setLayoutManager(investorLinearLayoutManager);
 
-
         db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        String groupId = getActivity().getIntent().getStringExtra("groupName");
-        if (groupId != null) {
-            DocumentReference docRef = db.collection("groups").document(groupId);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, "DocumentSnapshot data: " + data);
-                            ArrayList<String> dbMembers = (ArrayList) data.get("members");
-                            ArrayList<String> dbTraders = (ArrayList) data.get("traders");
-
-                            Log.d(TAG, "Members: " + dbMembers);
-                            Log.d(TAG, "Traders: " + dbTraders);
-
-                            if (dbMembers != null || dbMembers.get(0).equals("")) {
-                                members.addAll(dbMembers);
-                                memberAdapter.notifyDataSetChanged();
-                            }
-                            if (dbTraders != null || dbTraders.get(0).equals("")) {
-                                investors.addAll(dbTraders);
-                                investorAdapter.notifyDataSetChanged();
-                            }
-
-
-
-
-
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-        }
+        groupId = getActivity().getIntent().getStringExtra("groupId");
     }
 
     private void removeUserFromGroup() {
-        String groupId = getActivity().getIntent().getStringExtra("groupName");
         DocumentReference docRef = db.collection("groups").document(groupId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -202,12 +169,8 @@ public class SettingsFragment extends Fragment {
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         String userId = user.getEmail();
                         ArrayList<String> members = (ArrayList) data.get("members");
-                        for (String member:members){
-                            if (userId.equals(member)){
-                                members.remove(userId);
-                                goToGroups();
-                            }
-                        }
+                        members.remove(userId);
+                        goToGroups();
 
                         Map<String, Object> updatedData = new HashMap<>();
                         updatedData.put("members", members);
@@ -227,5 +190,4 @@ public class SettingsFragment extends Fragment {
         Intent i = new Intent(getActivity().getApplicationContext(), GroupsActivity.class);
         startActivity(i);
     }
-
 }
