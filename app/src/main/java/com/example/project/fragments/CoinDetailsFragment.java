@@ -191,7 +191,16 @@ public class CoinDetailsFragment extends Fragment {
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Fragment tradeFragment = new TradeFragment();
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, tradeFragment).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in_left,
+                                R.anim.slide_out_left,
+                                R.anim.slide_in_left,
+                                R.anim.slide_out_left
+                        )
+                        .replace(R.id.flContainer, tradeFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -228,7 +237,16 @@ public class CoinDetailsFragment extends Fragment {
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Fragment tradePaymentFragment = new TradePaymentFragment();
                 tradePaymentFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, tradePaymentFragment).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in_right,
+                                R.anim.slide_out_right,
+                                R.anim.slide_in_right,
+                                R.anim.slide_out_right
+                        )
+                        .replace(R.id.flContainer, tradePaymentFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -239,7 +257,16 @@ public class CoinDetailsFragment extends Fragment {
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Fragment tradePaymentFragment = new TradePaymentFragment();
                 tradePaymentFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, tradePaymentFragment).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in_right,
+                                R.anim.slide_out_right,
+                                R.anim.slide_in_right,
+                                R.anim.slide_out_right
+                        )
+                        .replace(R.id.flContainer, tradePaymentFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }

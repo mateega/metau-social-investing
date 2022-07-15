@@ -135,7 +135,8 @@ public class MainActivity extends AppCompatActivity {
                                     R.anim.no_transition,
                                     R.anim.no_transition
                             )
-                            .replace(R.id.flContainer, fragment).commit();
+                            .replace(R.id.flContainer, fragment)
+                            .commit();
                 } else if (currentFragPosition > newFragPosition) {
                     fragmentManager.beginTransaction()
                             .setCustomAnimations(
@@ -144,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
                                     R.anim.slide_in_left,
                                     R.anim.slide_out_left
                             )
-                            .replace(R.id.flContainer, fragment).commit();
+                            .replace(R.id.flContainer, fragment)
+                            .commit();
                 } else {
                     fragmentManager.beginTransaction()
                             .setCustomAnimations(
@@ -153,7 +155,8 @@ public class MainActivity extends AppCompatActivity {
                                     R.anim.slide_in_right,
                                     R.anim.slide_out_right
                             )
-                            .replace(R.id.flContainer, fragment).commit();
+                            .replace(R.id.flContainer, fragment)
+                            .commit();
                 }
                 currentFragPosition = newFragPosition;
                 return true;

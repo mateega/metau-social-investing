@@ -287,7 +287,16 @@ public class TradePaymentFragment extends Fragment {
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Fragment coinDetailsFragment = new CoinDetailsFragment();
                 coinDetailsFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, coinDetailsFragment).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in_left,
+                                R.anim.slide_out_left,
+                                R.anim.slide_in_left,
+                                R.anim.slide_out_left
+                        )
+                        .replace(R.id.flContainer, coinDetailsFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
