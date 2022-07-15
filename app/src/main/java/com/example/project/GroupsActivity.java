@@ -3,11 +3,13 @@ package com.example.project;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -71,6 +73,9 @@ public class GroupsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setEnterTransition(new Fade());
+        getWindow().setExitTransition(new Fade());
         db = FirebaseFirestore.getInstance();
 
         setContentView(R.layout.activity_groups);
@@ -187,7 +192,8 @@ public class GroupsActivity extends AppCompatActivity {
         i.putExtra("groupAssetCount", groupAssetCount);
         i.putExtra("personalAssetCount", personalAssetCount);
         i.putExtra("recentTrade", recentTrade);
-        startActivity(i);
+        startActivity(i,
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     public void pullPersonalData(String groupId, String groupName) {

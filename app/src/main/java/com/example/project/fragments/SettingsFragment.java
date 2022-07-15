@@ -1,5 +1,6 @@
 package com.example.project.fragments;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,24 +24,15 @@ import com.example.project.MemberAdapter;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.SetOptions;
 
-import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -139,7 +130,8 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 Intent i = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-                startActivity(i);
+                startActivity(i,
+                        ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
             }
         });
 
@@ -200,7 +192,8 @@ public class SettingsFragment extends Fragment {
     private void goToGroups(HashMap<String, HashMap<String, Object>> groupsMap) {
         Intent i = new Intent(getActivity().getApplicationContext(), GroupsActivity.class);
         i.putExtra("groupsMap", groupsMap);
-        startActivity(i);
+        startActivity(i,
+                ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
     }
 
     private void updateGroupAssetCount(HashMap<String, HashMap<String, Object>> map, String groupId) {

@@ -4,12 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.example.project.fragments.ChatFragment;
 import com.example.project.fragments.DepositFragment;
@@ -19,21 +20,12 @@ import com.example.project.fragments.TradeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.lang.ref.Reference;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +59,15 @@ public class MainActivity extends AppCompatActivity {
 
     HashMap<String, Object> newUserTrade;
 
+    int currentFragPosition;
+    int newFragPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setEnterTransition(new Fade());
+        getWindow().setExitTransition(new Fade());
         setContentView(R.layout.activity_main);
         this.getSupportActionBar().hide();
 
@@ -95,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
 
         newUserTrade = new HashMap<String, Object>();
 
+        currentFragPosition = 1;
+        newFragPosition = 1;
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -102,25 +103,59 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.actionGroupOverview:
+                        newFragPosition = 1;
                         fragment = new OverviewFragment();
                         break;
                     case R.id.actionDeposit:
+                        newFragPosition = 2;
                         fragment = new DepositFragment();
                         break;
                     case R.id.actionChat:
+                        newFragPosition = 3;
                         fragment = new ChatFragment();
                         break;
                     case R.id.actionTrade:
+                        newFragPosition = 4;
                         fragment = new TradeFragment();
                         break;
                     case R.id.actionSettings:
+                        newFragPosition = 5;
                         fragment = new SettingsFragment();
                         break;
                     default:
+                        newFragPosition = 1;
                         fragment = new OverviewFragment();
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                if (currentFragPosition == newFragPosition) {
+                    fragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.no_transition,
+                                    R.anim.no_transition,
+                                    R.anim.no_transition,
+                                    R.anim.no_transition
+                            )
+                            .replace(R.id.flContainer, fragment).commit();
+                } else if (currentFragPosition > newFragPosition) {
+                    fragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in_left,
+                                    R.anim.slide_out_left,
+                                    R.anim.slide_in_left,
+                                    R.anim.slide_out_left
+                            )
+                            .replace(R.id.flContainer, fragment).commit();
+                } else {
+                    fragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in_right,
+                                    R.anim.slide_out_right,
+                                    R.anim.slide_in_right,
+                                    R.anim.slide_out_right
+                            )
+                            .replace(R.id.flContainer, fragment).commit();
+                }
+                currentFragPosition = newFragPosition;
                 return true;
             }
         });
@@ -185,6 +220,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void pullChat() {
+        db.enableNetwork()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
         DocumentReference docRef = db.collection("chats").document(groupId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -210,6 +251,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        db.disableNetwork()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
     }
 
     ///////////////////////////////////////////
@@ -270,7 +317,6 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-
                     }
                 });
     }

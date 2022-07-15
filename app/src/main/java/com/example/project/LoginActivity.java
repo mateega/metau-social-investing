@@ -3,11 +3,14 @@ package com.example.project;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,7 +26,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
-import java.sql.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +57,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setEnterTransition(new Fade());
+        getWindow().setExitTransition(new Fade());
         setContentView(R.layout.activity_login);
         this.getSupportActionBar().hide();
 
@@ -87,12 +92,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
-
                 if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter email and password", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 loginUser(email, password);
             }
         });
@@ -139,13 +142,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToSignup() {
         Intent i = new Intent(this, SignupActivity.class);
-        startActivity(i);
+        startActivity(i,
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     private void goToGroups(HashMap<String, HashMap<String, Object>> groupsMap) {
         Intent i = new Intent(this, GroupsActivity.class);
         i.putExtra("groupsMap", groupsMap);
-        startActivity(i);
+        startActivity(i,
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     private void updateGroupAssetCount(HashMap<String, HashMap<String, Object>> map, String groupId) {

@@ -3,24 +3,23 @@ package com.example.project;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -64,6 +63,9 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setEnterTransition(new Fade());
+        getWindow().setExitTransition(new Fade());
         setContentView(R.layout.activity_signup);
         this.getSupportActionBar().hide();
 
@@ -118,7 +120,6 @@ public class SignupActivity extends AppCompatActivity {
             updateGroupAssetCount(map, GROUP_1_ID);
             updateGroupAssetCount(map, GROUP_2_ID);
             updateGroupAssetCount(map, GROUP_3_ID);
-
         }
     }
 
@@ -176,12 +177,14 @@ public class SignupActivity extends AppCompatActivity {
     private void goToGroups(HashMap<String, HashMap<String, Object>> groupsMap) {
         Intent i = new Intent(this, GroupsActivity.class);
         i.putExtra("groupsMap", groupsMap);
-        startActivity(i);
+        startActivity(i,
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     private void goToLogin() {
         Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
+        startActivity(i,
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     private void updateGroupAssetCount(HashMap<String, HashMap<String, Object>> map, String groupId) {
