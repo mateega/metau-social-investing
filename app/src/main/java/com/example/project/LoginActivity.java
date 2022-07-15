@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                         map.put(groupId, groupMap);
 
                         // if received all group data
-                        if (groupId.equals(GROUP_3_ID)) {
+                        if (map.size() == 3) {
                             goToGroups(map);
                             finish();
                         }

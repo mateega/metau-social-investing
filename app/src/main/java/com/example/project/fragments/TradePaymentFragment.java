@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.project.MainActivity;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -444,6 +445,8 @@ public class TradePaymentFragment extends Fragment {
                         message.put("type", "trade");
                         message.put("groupId", chatId);
 
+                        ((MainActivity)getActivity()).setNewUserTrade(message);
+
                         messages.add(message);
                         Map<String, Object> updatedData = new HashMap<>();
                         updatedData.put("messages", messages);
@@ -557,6 +560,7 @@ public class TradePaymentFragment extends Fragment {
 
     private void getSellAssets() {
         final Double[] holdingInUSD = {0.00};
+        groupId = getActivity().getIntent().getStringExtra("groupId");
         DocumentReference docRef = db.collection("groups").document(groupId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

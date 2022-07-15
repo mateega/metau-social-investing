@@ -162,7 +162,7 @@ public class GroupsActivity extends AppCompatActivity {
                     if (document.exists()) {
                         Map<String, Object> data = document.getData();
                         Log.d(TAG, "DocumentSnapshot data: " + data);
-
+                        members.addAll((ArrayList)data.get("members"));
                         members.add(userId);
                         Map<String, Object> updatedData = new HashMap<>();
                         updatedData.put("members", members);

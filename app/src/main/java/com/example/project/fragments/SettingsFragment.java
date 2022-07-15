@@ -38,6 +38,7 @@ import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.SetOptions;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,10 +57,18 @@ public class SettingsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "SETTINGS FRAGMENT";
 
+    private final String GROUP_1_ID = "penn_crypto";
+    private final String GROUP_2_ID = "columbia_blockchain";
+    private final String GROUP_3_ID = "tom's_alt_coin_fund";
+    private final String GROUP_1_NAME = "Penn Crypto";
+    private final String GROUP_2_NAME = "Columbia Blockchain";
+    private final String GROUP_3_NAME = "Tom's Alt Coin Fund";
+
     private Button btnLeaveGroup;
     private Button btnSignout;
     private FirebaseFirestore db;
     String groupId;
+    String userId;
 
     private RecyclerView rvInvestors;
     protected InvestorAdapter investorAdapter;
@@ -148,6 +157,7 @@ public class SettingsFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         groupId = getActivity().getIntent().getStringExtra("groupId");
+        userId = getActivity().getIntent().getStringExtra("userId");
     }
 
     private void removeUserFromGroup() {
@@ -166,16 +176,17 @@ public class SettingsFragment extends Fragment {
                         Map<String, Object> data = document.getData();
                         Log.d(TAG, "DocumentSnapshot data: " + data);
 
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        String userId = user.getEmail();
                         ArrayList<String> members = (ArrayList) data.get("members");
                         members.remove(userId);
-                        goToGroups();
 
                         Map<String, Object> updatedData = new HashMap<>();
                         updatedData.put("members", members);
                         db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
 
+                        HashMap<String, HashMap<String, Object>> map = new HashMap<String, HashMap<String, Object>>();
+                        updateGroupAssetCount(map, GROUP_1_ID);
+                        updateGroupAssetCount(map, GROUP_2_ID);
+                        updateGroupAssetCount(map, GROUP_3_ID);
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -186,8 +197,74 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-    private void goToGroups() {
+    private void goToGroups(HashMap<String, HashMap<String, Object>> groupsMap) {
         Intent i = new Intent(getActivity().getApplicationContext(), GroupsActivity.class);
+        i.putExtra("groupsMap", groupsMap);
         startActivity(i);
+    }
+
+    private void updateGroupAssetCount(HashMap<String, HashMap<String, Object>> map, String groupId) {
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        HashMap<String, Object> groupMap = new HashMap<String, Object>();
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
+
+                        Long groupAssets = (Long) data.get("assets");
+                        String groupAssetCount = String.valueOf(groupAssets);
+                        double amount = Double.parseDouble(groupAssetCount);
+                        DecimalFormat formatter = new DecimalFormat("#,###.00");
+                        groupAssetCount = "$" + formatter.format(amount);
+
+                        Boolean memberInGroup = false;
+                        ArrayList<String> members = (ArrayList) data.get("members");
+                        for (String member:members){
+                            if (userId.equals(member)){
+                                memberInGroup = true;
+                            }
+                        }
+                        String groupName = "";
+                        switch (groupId) {
+                            case GROUP_1_ID:
+                                groupName = GROUP_1_NAME;
+                                break;
+                            case GROUP_2_ID:
+                                groupName = GROUP_2_NAME;
+                                break;
+                            case GROUP_3_ID:
+                                groupName = GROUP_3_NAME;
+                                break;
+                            default:
+                                groupName = "";
+                                break;
+                        }
+
+                        groupMap.put("assets", groupAssetCount);
+                        groupMap.put("inGroup", memberInGroup);
+                        groupMap.put("groupName", groupName);
+                        map.put(groupId, groupMap);
+
+                        // if received all group data
+                        if (map.size() == 3) {
+                            goToGroups(map);
+                        }
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 }

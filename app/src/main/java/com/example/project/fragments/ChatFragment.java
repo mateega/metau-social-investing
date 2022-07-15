@@ -1,5 +1,7 @@
 package com.example.project.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -53,6 +55,9 @@ public class ChatFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    Activity mActivity;
+    Context mContext;
 
     String groupId;
     String groupName;
@@ -110,6 +115,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mContext = getContext();
 
         groupId = getActivity().getIntent().getStringExtra("groupId");
         groupName = getActivity().getIntent().getStringExtra("groupName");
@@ -154,12 +160,16 @@ public class ChatFragment extends Fragment {
                         return;
                     }
                     ArrayList<Map<String, Object>> newMessages = (ArrayList<Map<String, Object>>) value.getData().get("messages");
+                    HashMap<String, Object> newUserTrade = ((MainActivity)mContext).getNewUserTrade();
+                    if (newUserTrade != null && newUserTrade.size() != 0) {
+                        newMessages.add(((MainActivity)mContext).getNewUserTrade());
+                    }
                     Map<String, Object> newMessage = newMessages.get(newMessages.size()-1);
 
                     // work around to fix duplicate trade messages in chat
                     // if new message is a trade
                     if (newMessage.get("type").toString().equals("trade")) {
-                        ArrayList<Map<String, Object>> messages = ((MainActivity)getActivity()).getMessages();
+                        ArrayList<Map<String, Object>> messages = ((MainActivity)mContext).getMessages();
                         if (messages.size() != 0) {
                             String newLot = newMessage.get("lot").toString();
                             Map<String, Object> pastMessage = messages.get(messages.size()-1);
@@ -171,15 +181,28 @@ public class ChatFragment extends Fragment {
                                     chatAdapter.notifyDataSetChanged();
                                     rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                                 }
+                            } else {
+                                messages.add(newMessage);
+                                chatAdapter.notifyDataSetChanged();
+                                rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                             }
                         } else {
                             messages.add(newMessage);
                             chatAdapter.notifyDataSetChanged();
                             rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                         }
+
                     }
                 }
             });
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity =(Activity) context;
+        }
     }
 
     private void saveMessage(String body) {

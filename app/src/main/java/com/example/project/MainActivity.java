@@ -65,9 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String userId;
 
-
-
-
+    HashMap<String, Object> newUserTrade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         groupAssetCount = getIntent().getStringExtra("groupAssetCount");
         personalAssetCount = getIntent().getStringExtra("personalAssetCount");
         recentTrade = getIntent().getStringExtra("recentTrade");
+
+        newUserTrade = new HashMap<String, Object>();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -168,6 +168,14 @@ public class MainActivity extends AppCompatActivity {
     //   FUNCTIONS BELOW FOR CHAT FRAGMENT   //
     ///////////////////////////////////////////
 
+    public ArrayList<Map<String, Object>> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(ArrayList<Map<String, Object>> messages) {
+        this.messages = messages;
+    }
+
     public ChatAdapter getChatAdapter() {
         return chatAdapter;
     }
@@ -207,14 +215,6 @@ public class MainActivity extends AppCompatActivity {
     ///////////////////////////////////////////
     // FUNCTIONS BELOW FOR SETTINGS FRAGMENT //
     ///////////////////////////////////////////
-
-    public ArrayList<Map<String, Object>> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(ArrayList<Map<String, Object>> messages) {
-        this.messages = messages;
-    }
 
     public MemberAdapter getMemberAdapter() {
         return memberAdapter;
@@ -282,6 +282,19 @@ public class MainActivity extends AppCompatActivity {
     public void setPersonalAssets(String personalAssets) {
         personalAssetCount = personalAssets;
     }
+
+    ///////////////////////////////////////////
+    //  FUNCTIONS BELOW FOR TRADE FRAGMENT   //
+    ///////////////////////////////////////////
+
+    public HashMap<String, Object> getNewUserTrade() {
+        return newUserTrade;
+    }
+
+    public void setNewUserTrade(HashMap<String, Object> newUserTrade) {
+        this.newUserTrade = newUserTrade;
+    }
+
 
     ///////////////////////////////////////////
     // FUNCTIONS BELOW FOR OVERVIEW FRAGMENT //
