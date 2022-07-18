@@ -182,29 +182,10 @@ Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since 
     *  (Delete/DELETE) remove user from group if they would like to leave
 
 
+## Complex Features
 
-## Plan of action
-1. ~~Schema design~~
-2. ~~Set up database (Parse)~~
-   1. ~~Users~~
-      1. ~~Deposited amount~~
-   2. ~~Groups~~
-      1. ~~Users~~
-      2. ~~Trades~~
-      3. ~~Chat~~
-3. ~~Add 3 groups to the database~~
-4. ~~Configure login~~
-5. ~~Configure sign up~~
-6. ~~Set up search functionality (API used)~~
-7. ~~Set up trade payment functionality (user buys coin and result is sent to database)~~
-8. ~~Configure group invest amount on overview page~~
-9. ~~Configure most recent trade on overview page~~
-10. ~~Configure user depositing feature~~
-11. ~~Configure personal invest amount on overview page (based on how much the user has deposited in total)~~
-12. ~~Set up member count on overview page~~
-13. ~~List group members in settings page~~
-14. Toggle between investing and non-investing member in settings page [settings page complete]
-15. Set up trade info page (TradingView API used) 
-~~16. Give trade recommendations on trade page (optional, if I feel that the trade search page is too blank)~~
-17. Set up chat for each group
-18. Make custom charts for the trade:info page using past data
+Notifications
+* Serverless Firebase Cloud Function (JavaScript)
+* Deep linking
+![](https://https://github.com/mateega/metau-social-investing/tree/main/assets/notification-demo.gif)
+
