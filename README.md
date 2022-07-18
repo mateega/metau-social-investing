@@ -187,5 +187,5 @@ Within Firebase, I chose to go with Cloud Firestore over Realtime Databse since 
 Notifications
 * Serverless Firebase Cloud Function (JavaScript)
 * Deep linking
-![](https://https://github.com/mateega/metau-social-investing/tree/main/assets/notification-demo.gif)
+![](https://github.com/mateega/metau-social-investing/blob/main/assets/notification-demo.gif)
 
