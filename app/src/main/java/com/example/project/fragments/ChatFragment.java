@@ -69,8 +69,10 @@ public class ChatFragment extends Fragment {
     RecyclerView rvChat;
     EditText etSendMessage;
     ImageButton ibSend;
+    Boolean comingFromNotification;
 
     protected ChatAdapter chatAdapter;
+    protected ArrayList<Map<String, Object>> messages;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -121,17 +123,28 @@ public class ChatFragment extends Fragment {
         groupName = getActivity().getIntent().getStringExtra("groupName");
         userName = getActivity().getIntent().getStringExtra("userName");
         userId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
         db = FirebaseFirestore.getInstance();
-
         tvChat = view.findViewById(R.id.tvChat);
         etSendMessage = view.findViewById(R.id.etSendMessage);
         ibSend = view.findViewById(R.id.ibSend);
-        tvChat.setText(groupName + " chat");
-
         rvChat = view.findViewById(R.id.rvChat);
         chatAdapter = ((MainActivity)getActivity()).getChatAdapter();
         rvChat.setAdapter(chatAdapter);
+
+        comingFromNotification = false;
+        if (userName == null) {
+            comingFromNotification = true;
+            getUserName();
+            getGroupName(groupId);
+            pullChat();
+
+            messages = new ArrayList<>();
+            chatAdapter = new ChatAdapter(getContext(), messages, groupId);
+            rvChat.setAdapter(chatAdapter);
+        } else {
+            tvChat.setText(groupName + " chat");
+        }
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChat.setLayoutManager(linearLayoutManager);
         rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
@@ -151,6 +164,12 @@ public class ChatFragment extends Fragment {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
 
+        db.enableNetwork()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
         db.collection("chats").document(groupId)
             .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
@@ -192,9 +211,122 @@ public class ChatFragment extends Fragment {
                             rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                         }
 
+                    } else if (newMessage.get("type").toString().equals("message")){
+                        ArrayList<Map<String, Object>> messages = ((MainActivity)mContext).getMessages();
+
+                        if (messages.size() != 0) {
+                            Timestamp newTime = (Timestamp)newMessage.get("time");
+                            Map<String, Object> pastMessage = messages.get(messages.size()-1);
+                            // if past message is a message
+                            if (pastMessage.get("type").toString().equals("message")) {
+                                Timestamp pastTime = (Timestamp)messages.get(messages.size()-1).get("time");
+                                if (!newTime.equals(pastTime)) {
+                                    messages.add(newMessage);
+                                }
+                                chatAdapter.notifyDataSetChanged();
+                                rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                            } else {
+                                messages.add(newMessage);
+                                chatAdapter.notifyDataSetChanged();
+                                rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                            }
+                        } else {
+                            messages.add(newMessage);
+                            ((MainActivity)mContext).setMessages(messages);
+                            rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                        }
+                        if (comingFromNotification) {
+                            chatAdapter.addAll(messages);
+                            rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                        }
                     }
                 }
             });
+    }
+
+    private void getUserName() {
+        DocumentReference docRef = db.collection("users").document(userId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- USERS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
+                        userName = data.get("name").toString();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void pullChat() {
+        DocumentReference docRef = db.collection("chats").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- CHATS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
+                        ArrayList<Map<String, Object>> messagesMap = (ArrayList) data.get("messages");
+                        ((MainActivity)getActivity()).setMessages(messagesMap);
+                        if (comingFromNotification) {
+                            chatAdapter.addAll(messagesMap);
+                        }
+                        chatAdapter.notifyDataSetChanged();
+                        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void getGroupName(String groupId) {
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
+                        groupName = data.get("name").toString();
+                        tvChat.setText(groupName + " chat");
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     @Override
@@ -235,10 +367,6 @@ public class ChatFragment extends Fragment {
                         Map<String, Object> updatedData = new HashMap<>();
                         updatedData.put("messages", pastMessages);
                         db.collection("chats").document(groupId).set(updatedData, SetOptions.merge());
-
-                        messages.add(message);
-                        chatAdapter.notifyDataSetChanged();
-                        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                     } else {
                         Log.d(TAG, "No such document");
                     }

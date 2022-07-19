@@ -150,6 +150,13 @@ public class SettingsFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         groupId = getActivity().getIntent().getStringExtra("groupId");
         userId = getActivity().getIntent().getStringExtra("userId");
+
+        if (userId == null) {
+            HashMap<String, String> userData = new HashMap<>();
+            userData.putAll(((MainActivity)getActivity()).getUserData());
+            groupId = userData.get("groupId");
+            userId = userData.get("userId");
+        }
     }
 
     private void removeUserFromGroup() {

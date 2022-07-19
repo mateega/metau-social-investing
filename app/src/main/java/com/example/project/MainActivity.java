@@ -20,12 +20,19 @@ import com.example.project.fragments.TradeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.lang.ref.Reference;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public String recentTrade;
 
     public String userId;
+    public String userName;
 
     HashMap<String, Object> newUserTrade;
 
@@ -71,6 +79,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.getSupportActionBar().hide();
 
+        db = FirebaseFirestore.getInstance();
+
+        groupId = getIntent().getStringExtra("groupId");
+        groupName = getIntent().getStringExtra("groupName");
+        userId = getIntent().getStringExtra("userId");
+        userName = getIntent().getStringExtra("userName");
+        if (groupName == null) {
+            getGroupName(groupId);
+        }
+        if (userId == null) {
+            userId = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        }
+        memberCount = getIntent().getStringExtra("memberCount");
+        groupAssetCount = getIntent().getStringExtra("groupAssetCount");
+        personalAssetCount = getIntent().getStringExtra("personalAssetCount");
+        recentTrade = getIntent().getStringExtra("recentTrade");
+        if (memberCount == null) {
+            pullGroupData();
+        }
+
         members = new ArrayList<>();
         investors = new ArrayList<>();
         memberAdapter = new MemberAdapter(this, members);
@@ -83,13 +111,6 @@ public class MainActivity extends AppCompatActivity {
         holdingAdapter = new HoldingAdapter(this, holdings, groupId);
 
         groupData = new HashMap<>();
-
-        userId = getIntent().getStringExtra("userId");
-
-        memberCount = getIntent().getStringExtra("memberCount");
-        groupAssetCount = getIntent().getStringExtra("groupAssetCount");
-        personalAssetCount = getIntent().getStringExtra("personalAssetCount");
-        recentTrade = getIntent().getStringExtra("recentTrade");
 
         newUserTrade = new HashMap<String, Object>();
 
@@ -186,14 +207,35 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
         }
 
-        db = FirebaseFirestore.getInstance();
-
-        groupId = getIntent().getStringExtra("groupId");
-        groupName = getIntent().getStringExtra("groupName");
-
         pullMemberList();
         pullChat();
         pullHoldings();
+    }
+
+    private void getGroupName(String groupId) {
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        Log.d(TAG, "DocumentSnapshot data: " + data);
+                        groupName = data.get("name").toString();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     @Override
@@ -212,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setMessages(ArrayList<Map<String, Object>> messages) {
         this.messages = messages;
+        chatAdapter.notifyDataSetChanged();
     }
 
     public ChatAdapter getChatAdapter() {
@@ -254,12 +297,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        db.disableNetwork()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                    }
-                });
+        // turning off disableNetwork() until I figure out how to allow push notifications while
+        // disableNetwork() is activated
+//        db.disableNetwork()
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                    }
+//                });
     }
 
     ///////////////////////////////////////////
@@ -316,12 +361,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        db.disableNetwork()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                    }
-                });
+        // turning off disableNetwork() until I figure out how to allow push notifications while
+        // disableNetwork() is activated
+//        db.disableNetwork()
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                    }
+//                });
     }
 
     ///////////////////////////////////////////
@@ -447,5 +494,112 @@ public class MainActivity extends AppCompatActivity {
         }
         holdings.addAll(tradesMap.values());
         holdingAdapter.notifyDataSetChanged();
+    }
+
+    //////////////////////////////////////////////////
+    // FUNCTIONS BELOW FOR START FROM NOTIFICATION  //
+    //////////////////////////////////////////////////
+
+    public HashMap<String, String> getUserData() {
+        HashMap<String,String> userData = new HashMap<String, String>();
+        userData.put("userId", userId);
+        userData.put("userName", userName);
+        userData.put("groupId", groupId);
+        userData.put("groupName", groupName);
+        return userData;
+    }
+
+    public void pullPersonalData() {
+        DocumentReference docRef = db.collection("users").document(userId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- USERS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        userName = data.get("name").toString();
+                        personalAssetCount = getPersonalAssets(data);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private String getPersonalAssets(Map<String, Object> data) {
+        String personalAssetsCount = "0";
+        if (data.containsKey("assets")) {
+            personalAssetsCount = String.valueOf(data.get("assets"));
+        }
+        if (personalAssetsCount.equals("0")) {
+            personalAssetsCount = "$0.00";
+        } else {
+            double amount = Double.parseDouble(personalAssetsCount);
+            DecimalFormat formatter = new DecimalFormat("#,###.00");
+            personalAssetsCount = "$" + formatter.format(amount);
+        }
+        return personalAssetsCount;
+    }
+
+    public void pullGroupData() {
+        db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        memberCount = getMemberCount(data);
+                        groupAssetCount = getGroupAssets(data);
+                        recentTrade = getRecentTrade(data);
+                        pullPersonalData();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private String getRecentTrade(Map<String, Object> data) {
+        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
+        int numTrades = trades.size();
+        Map<String, Object> trade = trades.get(numTrades - 1);
+        Timestamp time = (Timestamp) trade.get("time");
+        Date javaDate = time.toDate();
+        DateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+        return dateFormat.format(javaDate);
+    }
+
+    private String getGroupAssets(Map<String, Object> data) {
+        Long groupAssets = (Long) data.get("assets");
+        groupAssetCount = String.valueOf(groupAssets);
+        double amount = Double.parseDouble(groupAssetCount);
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        return "$" + formatter.format(amount);
+    }
+
+    private String getMemberCount(Map<String, Object> data) {
+        ArrayList<Reference> list = (ArrayList) data.get("members");
+        int groupSize = list.size();
+        return String.valueOf(groupSize);
     }
 }

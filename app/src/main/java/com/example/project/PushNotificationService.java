@@ -37,7 +37,7 @@ public class PushNotificationService extends FirebaseMessagingService {
             intent.setData(Uri.parse(deepLink));
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("deepLink", deepLink);
-            intent.putExtra("groupName", groupId);
+            intent.putExtra("groupId", groupId);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
