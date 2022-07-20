@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.project.BuildConfig;
 import com.example.project.Coin;
+import com.example.project.MainActivity;
 import com.example.project.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.net.HttpHeaders;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.Callback;
@@ -41,7 +50,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,6 +64,7 @@ public class CoinDetailsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "COIN DETAILS FRAGMENT";
 
     private String mParam1;
     private String mParam2;
@@ -65,15 +77,6 @@ public class CoinDetailsFragment extends Fragment {
     ImageView ivCoinImage;
 
     ImageButton ibBack;
-
-    // Data points below chart
-    // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
-//    TextView tvHigh;
-//    TextView tvOpen;
-//    TextView tvLow;
-//    TextView tvVolume;
-
-    WebView wbChart;
 
     String name;
     String ticker;
@@ -136,13 +139,6 @@ public class CoinDetailsFragment extends Fragment {
         bundle.putString("rank", rank);
         bundle.putString("imageUrl", imageUrl);
 
-        // Data points below chart
-        // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
-//        high = getArguments().getString("high");
-//        low = getArguments().getString("low");
-//        open = getArguments().getString("open");
-//        volume = getArguments().getString("volume");
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_coin_details, container, false);
     }
@@ -158,8 +154,6 @@ public class CoinDetailsFragment extends Fragment {
         tvPrice = view.findViewById(R.id.tvPrice);
         tvPriceChange = view.findViewById(R.id.tvPriceChange);
         ivCoinImage = view.findViewById(R.id.ivCoinImage);
-        //tvChart = view.findViewById(R.id.tvChart);
-        //wbChart = view.findViewById(R.id.wvChart);
         btnSell = view.findViewById(R.id.btnSell);
         btnBuy = view.findViewById(R.id.btnBuy);
 
@@ -203,32 +197,6 @@ public class CoinDetailsFragment extends Fragment {
                         .commit();
             }
         });
-
-        // TRADINGVIEW CHART LOADED WITH DUMMY DATA (AAPL STOCK)
-//        String chartStr = "<!-- TradingView Widget BEGIN -->\n" +
-//                "<div class=\"tradingview-widget-container\">\n" +
-//                "  <div id=\"tradingview_398d5\"></div>\n" +
-//                "  <div class=\"tradingview-widget-copyright\"><a href=\"https://www.tradingview.com/symbols/NASDAQ-AAPL/\" rel=\"noopener\" target=\"_blank\"><span class=\"blue-text\">AAPL Chart</span></a> by TradingView</div>\n" +
-//                "  <script type=\"text/javascript\" src=\"https://s3.tradingview.com/tv.js\"></script>\n" +
-//                "  <script type=\"text/javascript\">\n" +
-//                "  new TradingView.widget(\n" +
-//                "  {\n" +
-//                "  \"autosize\": true,\n" +
-//                "  \"symbol\": \"NASDAQ:AAPL\",\n" +
-//                "  \"interval\": \"D\",\n" +
-//                "  \"timezone\": \"Etc/UTC\",\n" +
-//                "  \"theme\": \"light\",\n" +
-//                "  \"style\": \"1\",\n" +
-//                "  \"locale\": \"en\",\n" +
-//                "  \"toolbar_bg\": \"#f1f3f6\",\n" +
-//                "  \"enable_publishing\": false,\n" +
-//                "  \"allow_symbol_change\": true,\n" +
-//                "  \"container_id\": \"tradingview_398d5\"\n" +
-//                "}\n" +
-//                "  );\n" +
-//                "  </script>\n" +
-//                "</div>\n" +
-//                "<!-- TradingView Widget END -->";
 
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override

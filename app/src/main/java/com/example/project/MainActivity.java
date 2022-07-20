@@ -377,6 +377,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPersonalAssets(String personalAssets) {
         personalAssetCount = personalAssets;
+        if (personalAssets.charAt(0) != '$') {
+            double amount = Double.parseDouble(personalAssetCount);
+            DecimalFormat formatter = new DecimalFormat("#,###.00");
+            this.personalAssetCount = "$" + formatter.format(amount);
+        }
     }
 
     ///////////////////////////////////////////
@@ -601,5 +606,50 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Reference> list = (ArrayList) data.get("members");
         int groupSize = list.size();
         return String.valueOf(groupSize);
+    }
+
+    public void setGroupAssets(String groupAssetCount) {
+        this.groupAssetCount = groupAssetCount;
+        double amount = Double.parseDouble(this.groupAssetCount);
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        this.groupAssetCount = "$" + formatter.format(amount);
+    }
+
+    public void getNewHoldings() {
+        holdings.clear();
+        db.enableNetwork()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+                        setHoldingsFromActivity(data);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+        db.disableNetwork()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
     }
 }

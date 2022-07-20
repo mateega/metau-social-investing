@@ -346,11 +346,25 @@ public class TradePaymentFragment extends Fragment {
                                 trade.put("ticker", ticker);
                                 trade.put("time", tradeTimestamp);
                                 trade.put("trader", userId);
-
                                 trades.add(trade);
+
+                                String groupAssetsStr = data.get("assets").toString();
+                                Double groupAssetsDbl = Double.valueOf(groupAssetsStr);
+                                Double tradeAmount = Double.valueOf(priceNumber.toString()) * tradeLot;
+                                groupAssetsDbl += tradeAmount;
+                                Number groupAssetsNum = (Number)groupAssetsDbl;
+                                ((MainActivity)getActivity()).setGroupAssets(groupAssetsDbl.toString());
                                 Map<String, Object> updatedData = new HashMap<>();
                                 updatedData.put("trades", trades);
+                                updatedData.put("assets", groupAssetsNum);
+                                db.enableNetwork()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                            }
+                                        });
                                 db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+                                ((MainActivity)getActivity()).getNewHoldings();
                                 updateUserBuyBalance(buyAmount);
                                 buyAmount = 0.00;
                                 setBuySellAmount(buyAmount);
@@ -406,11 +420,19 @@ public class TradePaymentFragment extends Fragment {
                                 trade.put("ticker", ticker);
                                 trade.put("time", tradeTimestamp);
                                 trade.put("trader", userId);
-
                                 trades.add(trade);
+
+                                String groupAssetsStr = data.get("assets").toString();
+                                Double groupAssetsDbl = Double.valueOf(groupAssetsStr);
+                                Double tradeAmount = Double.valueOf(priceNumber.toString()) * tradeLot;
+                                groupAssetsDbl -= tradeAmount;
+                                Number groupAssetsNum = (Number)groupAssetsDbl;
+                                ((MainActivity)getActivity()).setGroupAssets(groupAssetsDbl.toString());
                                 Map<String, Object> updatedData = new HashMap<>();
                                 updatedData.put("trades", trades);
+                                updatedData.put("assets", groupAssetsNum);
                                 db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+                                ((MainActivity)getActivity()).getNewHoldings();
                                 updateUserBuyBalance(buyAmount);
                                 buyAmount = 0.00;
                                 setBuySellAmount(buyAmount);
@@ -494,7 +516,7 @@ public class TradePaymentFragment extends Fragment {
                             Map<String, Object> updatedData = new HashMap<>();
                             updatedData.put("assets", assets);
                             db.collection("users").document(userId).set(updatedData, SetOptions.merge());
-
+                            ((MainActivity)getActivity()).setPersonalAssets(assets.toString());
                             DecimalFormat formatter = new DecimalFormat("#,###.00");
                             currentAssets = "You have $" + formatter.format(assets) + " available";
                             tvCurrentAccountAssets.setText(currentAssets);

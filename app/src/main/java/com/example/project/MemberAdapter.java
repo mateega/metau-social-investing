@@ -82,7 +82,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
                     if (task.getResult().getMetadata().isFromCache()) {
                         Log.i(TAG, "CALLED DATA FROM CACHE");
                     } else {
-                        Log.i(TAG, "CALLED FIREBASE DATABASE -- TASK");
+                        Log.i(TAG, "CALLED FIREBASE DATABASE -- USERS");
                     }
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();

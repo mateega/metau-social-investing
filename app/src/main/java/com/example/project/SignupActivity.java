@@ -204,8 +204,7 @@ public class SignupActivity extends AppCompatActivity {
                         Map<String, Object> data = document.getData();
                         Log.d(TAG, "DocumentSnapshot data: " + data);
 
-                        Long groupAssets = (Long) data.get("assets");
-                        String groupAssetCount = String.valueOf(groupAssets);
+                        String groupAssetCount = data.get("assets").toString();
                         double amount = Double.parseDouble(groupAssetCount);
                         DecimalFormat formatter = new DecimalFormat("#,###.00");
                         groupAssetCount = "$" + formatter.format(amount);
