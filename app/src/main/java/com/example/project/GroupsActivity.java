@@ -277,8 +277,7 @@ public class GroupsActivity extends AppCompatActivity {
     }
 
     private String getGroupAssets(Map<String, Object> data) {
-        Long groupAssets = (Long) data.get("assets");
-        groupAssetCount = String.valueOf(groupAssets);
+        groupAssetCount = data.get("assets").toString();
         double amount = Double.parseDouble(groupAssetCount);
         DecimalFormat formatter = new DecimalFormat("#,###.00");
         return "$" + formatter.format(amount);

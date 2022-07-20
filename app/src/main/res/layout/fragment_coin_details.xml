@@ -283,4 +283,18 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btnSellAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="30dp"
+        android:background="@drawable/layout_rounded_2"
+        app:backgroundTint="@color/black"
+        android:fontFamily="@font/helveticaneue_medium"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:text="Sell All" />
+
 </LinearLayout>

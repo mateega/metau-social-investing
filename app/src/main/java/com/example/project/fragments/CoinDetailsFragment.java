@@ -87,9 +87,11 @@ public class CoinDetailsFragment extends Fragment {
 
     Button btnSell;
     Button btnBuy;
+    Button btnSellAll;
 
     Bundle bundle;
 
+    private FirebaseFirestore db;
 
     public CoinDetailsFragment() {
         // Required empty public constructor
@@ -156,13 +158,10 @@ public class CoinDetailsFragment extends Fragment {
         ivCoinImage = view.findViewById(R.id.ivCoinImage);
         btnSell = view.findViewById(R.id.btnSell);
         btnBuy = view.findViewById(R.id.btnBuy);
+        btnSellAll = view.findViewById(R.id.btnSellAll);
 
-        // Data points below chart
-        // Commented out until I decide which data points should be displayed (e.g. high, low, open, volume)
-//        tvHigh = view.findViewById(R.id.tvHigh);
-//        tvLow = view.findViewById(R.id.tvLow);
-//        tvOpen = view.findViewById(R.id.tvOpen);
-//        tvVolume = view.findViewById(R.id.tvVolume);
+        db = FirebaseFirestore.getInstance();
+        checkForPosition();
 
         tvCoinName.setText(name);
         tvCoinName2.setText(name);
@@ -235,6 +234,88 @@ public class CoinDetailsFragment extends Fragment {
                         .replace(R.id.flContainer, tradePaymentFragment)
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+
+        btnSellAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sellAll();
+                btnSellAll.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void sellAll() {
+        String groupId = getActivity().getIntent().getStringExtra("groupId");
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+
+                        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
+                        ArrayList<Map<String, Object>> newTrades = new ArrayList<>();
+                        for (int i = 0; i < trades.size(); i++) {
+                            Map<String, Object> trade = trades.get(i);
+                            String tradeTicker = trade.get("ticker").toString();
+                            if (!tradeTicker.equals(ticker)) {
+                                newTrades.add(trade);
+                            }
+                        }
+                        Map<String, Object> updatedData = new HashMap<>();
+                        updatedData.put("trades", newTrades);
+                        db.collection("groups").document(groupId).set(updatedData, SetOptions.merge());
+                        Toast.makeText(getActivity().getApplicationContext(), "Trade confirmed", Toast.LENGTH_SHORT).show();
+                        ((MainActivity)getActivity()).getNewHoldings();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void checkForPosition() {
+        String groupId = getActivity().getIntent().getStringExtra("groupId");
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().getMetadata().isFromCache()) {
+                    Log.i(TAG, "CALLED DATA FROM CACHE");
+                } else {
+                    Log.i(TAG, "CALLED FIREBASE DATABASE -- GROUPS");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> data = document.getData();
+
+                        ArrayList<Map<String, Object>> trades = (ArrayList) data.get("trades");
+                        for (int i = 0; i < trades.size(); i++) {
+                            Map<String, Object> trade = trades.get(i);
+                            String tradeTicker = trade.get("ticker").toString();
+                            if (tradeTicker.equals(ticker)) {
+                                btnSellAll.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
             }
         });
     }
