@@ -178,24 +178,34 @@ public class ChatFragment extends Fragment {
                         Log.w(TAG, "Listen error", error);
                         return;
                     }
-                    ArrayList<Map<String, Object>> newMessages = (ArrayList<Map<String, Object>>) value.getData().get("messages");
-                    HashMap<String, Object> newUserTrade = ((MainActivity)mContext).getNewUserTrade();
-                    if (newUserTrade != null && newUserTrade.size() != 0) {
-                        newMessages.add(((MainActivity)mContext).getNewUserTrade());
-                    }
-                    Map<String, Object> newMessage = newMessages.get(newMessages.size()-1);
 
-                    // work around to fix duplicate trade messages in chat
-                    // if new message is a trade
-                    if (newMessage.get("type").toString().equals("trade")) {
-                        ArrayList<Map<String, Object>> messages = ((MainActivity)mContext).getMessages();
-                        if (messages.size() != 0) {
-                            String newLot = newMessage.get("lot").toString();
-                            Map<String, Object> pastMessage = messages.get(messages.size()-1);
-                            // if past message is a trade
-                            if (pastMessage.get("type").toString().equals("trade")) {
-                                String pastLot = messages.get(messages.size()-1).get("lot").toString();
-                                if (!newLot.equals(pastLot)) {
+                    if (value.getData().containsKey("messages")) {
+                        Object messagesObj = value.get("messages").getClass();
+                        if (messagesObj == HashMap.class) {
+                            return;
+                        }
+                        ArrayList<Map<String, Object>> newMessages = (ArrayList<Map<String, Object>>) value.getData().get("messages");
+                        HashMap<String, Object> newUserTrade = ((MainActivity)mContext).getNewUserTrade();
+                        if (newUserTrade != null && newUserTrade.size() != 0) {
+                            newMessages.add(((MainActivity)mContext).getNewUserTrade());
+                        }
+                        Map<String, Object> newMessage = newMessages.get(newMessages.size()-1);
+                        // work around to fix duplicate trade messages in chat
+                        // if new message is a trade
+                        if (newMessage.get("type").toString().equals("trade")) {
+                            ArrayList<Map<String, Object>> messages = ((MainActivity)mContext).getMessages();
+                            if (messages.size() != 0) {
+                                String newLot = newMessage.get("lot").toString();
+                                Map<String, Object> pastMessage = messages.get(messages.size()-1);
+                                // if past message is a trade
+                                if (pastMessage.get("type").toString().equals("trade")) {
+                                    String pastLot = messages.get(messages.size()-1).get("lot").toString();
+                                    if (!newLot.equals(pastLot)) {
+                                        messages.add(newMessage);
+                                        chatAdapter.notifyDataSetChanged();
+                                        rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                                    }
+                                } else {
                                     messages.add(newMessage);
                                     chatAdapter.notifyDataSetChanged();
                                     rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
@@ -205,39 +215,35 @@ public class ChatFragment extends Fragment {
                                 chatAdapter.notifyDataSetChanged();
                                 rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                             }
-                        } else {
-                            messages.add(newMessage);
-                            chatAdapter.notifyDataSetChanged();
-                            rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
-                        }
 
-                    } else if (newMessage.get("type").toString().equals("message")){
-                        ArrayList<Map<String, Object>> messages = ((MainActivity)mContext).getMessages();
+                        } else if (newMessage.get("type").toString().equals("message")){
+                            ArrayList<Map<String, Object>> messages = ((MainActivity)mContext).getMessages();
 
-                        if (messages.size() != 0) {
-                            Timestamp newTime = (Timestamp)newMessage.get("time");
-                            Map<String, Object> pastMessage = messages.get(messages.size()-1);
-                            // if past message is a message
-                            if (pastMessage.get("type").toString().equals("message")) {
-                                Timestamp pastTime = (Timestamp)messages.get(messages.size()-1).get("time");
-                                if (!newTime.equals(pastTime)) {
+                            if (messages.size() != 0) {
+                                Timestamp newTime = (Timestamp)newMessage.get("time");
+                                Map<String, Object> pastMessage = messages.get(messages.size()-1);
+                                // if past message is a message
+                                if (pastMessage.get("type").toString().equals("message")) {
+                                    Timestamp pastTime = (Timestamp)messages.get(messages.size()-1).get("time");
+                                    if (!newTime.equals(pastTime)) {
+                                        messages.add(newMessage);
+                                    }
+                                    chatAdapter.notifyDataSetChanged();
+                                    rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                                } else {
                                     messages.add(newMessage);
+                                    chatAdapter.notifyDataSetChanged();
+                                    rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                                 }
-                                chatAdapter.notifyDataSetChanged();
-                                rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                             } else {
                                 messages.add(newMessage);
-                                chatAdapter.notifyDataSetChanged();
+                                ((MainActivity)mContext).setMessages(messages);
                                 rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
                             }
-                        } else {
-                            messages.add(newMessage);
-                            ((MainActivity)mContext).setMessages(messages);
-                            rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
-                        }
-                        if (comingFromNotification) {
-                            chatAdapter.addAll(messages);
-                            rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                            if (comingFromNotification) {
+                                chatAdapter.addAll(messages);
+                                rvChat.scrollToPosition(chatAdapter.getItemCount()-1);
+                            }
                         }
                     }
                 }
